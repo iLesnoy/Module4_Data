@@ -1,8 +1,6 @@
 package com.epam.esm.gifts.impl;
 
 import com.epam.esm.gifts.converter.OrderConverter;
-import com.epam.esm.gifts.dao.impl.OrderDaoImpl;
-import com.epam.esm.gifts.dao.impl.UserDaoImpl;
 import com.epam.esm.gifts.dto.*;
 import com.epam.esm.gifts.exception.SystemException;
 import com.epam.esm.gifts.model.GiftCertificate;
@@ -34,12 +32,12 @@ class OrderServiceImplTest {
     private OrderServiceImpl service;
     @Mock
     private UserServiceImpl userService;
-    @Mock
-    private UserDaoImpl userDao;
+/*    @Mock
+    private UserRepositoryImpl userDao;
     @Mock
     private OrderConverter converter;
     @Mock
-    private OrderDaoImpl orderDao;
+    private OrderRepositoryImpl orderDao;
     @Mock
     private EntityValidator validator;
     @Mock
@@ -84,7 +82,7 @@ class OrderServiceImplTest {
         doReturn(certificate).when(certificateService).findCertificateById(anyLong());
         doReturn(orderDto).when(converter).orderToDto(any(Order.class));
         doReturn(order).when(orderDao).create(any(Order.class));
-        ResponseOrderDto order = service.createOrder(request);
+        ResponseOrderDto order = service.create(request);
         assertEquals(order,orderDto);
     }
 
@@ -92,7 +90,7 @@ class OrderServiceImplTest {
     @Test
     void createThrowsExceptionWithInvalidRequestData() {
         doReturn(false).when(validator).isRequestOrderDataValid(any(RequestOrderDto.class));
-        SystemException thrown = assertThrows(SystemException.class, () -> service.createOrder(request));
+        SystemException thrown = assertThrows(SystemException.class, () -> service.create(request));
         assertEquals(40410, thrown.getErrorCode());
     }
 
@@ -118,7 +116,7 @@ class OrderServiceImplTest {
         CustomPage<ResponseOrderDto> customPage = service.findAll(pageable);
         assertEquals(customPage.getSize(),1);
 
-    }
+    }*/
 
     @Test
     void delete() {

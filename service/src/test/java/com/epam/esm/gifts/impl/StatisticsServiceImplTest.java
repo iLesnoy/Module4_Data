@@ -1,7 +1,6 @@
 package com.epam.esm.gifts.impl;
 
 import com.epam.esm.gifts.converter.TagConverter;
-import com.epam.esm.gifts.dao.impl.StatisticsDaoImpl;
 import com.epam.esm.gifts.dto.TagDto;
 import com.epam.esm.gifts.exception.SystemException;
 import com.epam.esm.gifts.model.Tag;
@@ -17,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
@@ -25,8 +23,8 @@ import static org.mockito.Mockito.doReturn;
 class StatisticsServiceImplTest {
     @InjectMocks
     private StatisticsServiceImpl service;
-    @Mock
-    private StatisticsDaoImpl statisticsDao;
+    /*@Mock
+    private StatisticsRepositoryImpl statisticsDao;
     @Mock
     private TagConverter dtoConverter;
 
@@ -52,5 +50,5 @@ class StatisticsServiceImplTest {
         doReturn(Optional.empty()).when(statisticsDao).findMostPopularTag();
         SystemException thrown = assertThrows(SystemException.class, () -> service.mostWidelyUsedTag());
         assertEquals(40410, thrown.getErrorCode());
-    }
+    }*/
 }
