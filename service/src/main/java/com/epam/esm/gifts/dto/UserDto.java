@@ -10,15 +10,29 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.hateoas.RepresentationModel;
 
+import static com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY;
+
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@JsonPropertyOrder({"id", "name"})
+@JsonPropertyOrder({"id", "name", "role"})
 public class UserDto extends RepresentationModel<UserDto> {
+
     @JsonProperty("id")
     private Long id;
+
     @JsonProperty("name")
     private String name;
+
+    @JsonProperty(access = WRITE_ONLY)
+    private String password;
+
+    @JsonProperty("role")
+    private Role role;
+
+    public enum Role {
+        ADMIN, USER
+    }
 }
