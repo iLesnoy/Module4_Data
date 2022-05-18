@@ -1,5 +1,6 @@
 # Module3_REST
 ![img.png](img.png)
+
 This module is an extension of REST API Advanced module and covers following topics:
 
 1. Spring Security framework
