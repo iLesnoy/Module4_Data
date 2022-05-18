@@ -1,7 +1,8 @@
 package com.epam.esm.gifts;
 
-import com.epam.esm.gifts.dto.CustomPage;
-import com.epam.esm.gifts.dto.CustomPageable;
+import com.epam.esm.gifts.dto.ResponseOrderDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface BaseService<T> {
 
@@ -11,11 +12,7 @@ public interface BaseService<T> {
 
     T findById(Long id);
 
-    CustomPage<T> findAll(CustomPageable pageable);
+    Page<T> findAll(Pageable pageable);
 
     void delete(Long id);
-
-    default int calculateOffset(CustomPageable pageable) {
-        return pageable.getSize() * pageable.getPage();
-    }
 }

@@ -2,15 +2,17 @@ package com.epam.esm.gifts.impl;
 
 import com.epam.esm.gifts.TagService;
 import com.epam.esm.gifts.converter.TagConverter;
-import com.epam.esm.gifts.dao.impl.TagDaoImpl;
+import com.epam.esm.gifts.dao.TagRepository;
 import com.epam.esm.gifts.dto.CustomPage;
-import com.epam.esm.gifts.dto.CustomPageable;
 import com.epam.esm.gifts.dto.TagDto;
 import com.epam.esm.gifts.exception.SystemException;
 import com.epam.esm.gifts.model.GiftCertificate;
 import com.epam.esm.gifts.model.Tag;
 import com.epam.esm.gifts.validator.EntityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,13 +24,13 @@ import static com.epam.esm.gifts.exception.ExceptionCode.*;
 @Service
 public class TagServiceImpl implements TagService {
 
-    TagDaoImpl tagDao;
+    TagRepository tagRepository;
     TagConverter tagConverter;
     EntityValidator entityValidator;
 
     @Autowired
-    public TagServiceImpl(TagDaoImpl tagDao, TagConverter tagConverter, EntityValidator entityValidator) {
-        this.tagDao = tagDao;
+    public TagServiceImpl(TagRepository tagRepository, TagConverter tagConverter, EntityValidator entityValidator) {
+        this.tagRepository = tagRepository;
         this.tagConverter = tagConverter;
         this.entityValidator = entityValidator;
     }
@@ -42,17 +44,17 @@ public class TagServiceImpl implements TagService {
 
     public Tag createTag(Tag tag) {
         if (entityValidator.isNameValid(tag.getName())) {
-            return tagDao.findByName(tag.getName()).orElseGet(() -> tagDao.create(tag));
+            return tagRepository.findByName(tag.getName()).orElseGet(() -> tagRepository.save(tag));
         }
         throw new SystemException(TAG_INVALID_NAME);
     }
 
     @Override
     public TagDto update(Long id, TagDto tagDto) {
-        Optional<Tag> optionalUser = tagDao.findById(id);
+        Optional<Tag> optionalUser = tagRepository.findById(id);
         if (optionalUser.isPresent()) {
             if (entityValidator.isNameValid(tagDto.getName())) {
-                tagDao.update(tagConverter.dtoToTag(tagDto));
+                tagRepository.save(tagConverter.dtoToTag(tagDto));
             }
             throw new SystemException(TAG_INVALID_NAME);
         }
@@ -61,18 +63,13 @@ public class TagServiceImpl implements TagService {
 
     @Override
     @Transactional
-    public CustomPage<TagDto> findAll(CustomPageable pageable) {
-        if (!entityValidator.isPageDataValid(pageable)) {
-            throw new SystemException(INVALID_DATA_OF_PAGE);
-        }
-        long totalTagNumber = tagDao.findEntityNumber();
-        if (!entityValidator.isPageExists(pageable, totalTagNumber)) {
+    public Page<TagDto> findAll(Pageable pageable) {
+        Page<Tag> tagPage = tagRepository.findAll(pageable);
+        if (!entityValidator.isPageExists(pageable, tagPage.getTotalElements())) {
             throw new SystemException(NON_EXISTENT_PAGE);
         }
-        int offset = calculateOffset(pageable);
-        List<TagDto> tagDtoList = tagDao.findAll(offset, pageable.getSize())
-                .stream().map(tagConverter::tagToDto).toList();
-        return new CustomPage<>(tagDtoList, pageable, totalTagNumber);
+        return new PageImpl<>(tagPage.getContent(), tagPage.getPageable(), tagPage.getTotalElements())
+                .map(tagConverter::tagToDto);
     }
 
     @Override
@@ -81,24 +78,18 @@ public class TagServiceImpl implements TagService {
     }
 
     private Tag findTagById(Long id) {
-        return tagDao.findById(id).orElseThrow(() -> new SystemException(NON_EXISTENT_ENTITY));
+        return tagRepository.findById(id).orElseThrow(() -> new SystemException(NON_EXISTENT_ENTITY));
     }
 
 
     @Override
     @Transactional
     public void delete(Long id) {
-        Optional<Tag> optionalTag = tagDao.findById(id);
+        Optional<Tag> optionalTag = tagRepository.findById(id);
         if (optionalTag.isPresent()) {
-            List<GiftCertificate> tagList = tagDao.isTagUsed(optionalTag.get());
-            if (tagList.isEmpty()) {
-                tagDao.delete(optionalTag.get());
-            } else {
-                throw new SystemException(USED_ENTITY);
-            }
-        } else {
-            throw new SystemException(NON_EXISTENT_ENTITY);
+            throw new SystemException(USED_ENTITY);
         }
+        tagRepository.delete(optionalTag.get());
     }
 
 }
