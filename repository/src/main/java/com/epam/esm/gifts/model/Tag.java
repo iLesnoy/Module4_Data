@@ -14,7 +14,7 @@ import java.util.Set;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Table(name = "tag")
 @Entity
-public class Tag{
+public class Tag extends Auditable<String>{
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
