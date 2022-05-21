@@ -44,4 +44,9 @@ public class AuthenticationController {
         String token = jwtTokenProvider.createToken(userDto.getName(), userDto.getRole().name());
         return AuthenticationResponseDto.builder().username(requestDto.getName()).token(token).build();
     }
+
+    @PostMapping("/login/oauth")
+    public AuthenticationResponseDto oauthAuthenticate(@PathVariable AuthenticationRequestDto requestDto) {
+        return AuthenticationResponseDto.builder().username(requestDto.getName()).build();
+    }
 }

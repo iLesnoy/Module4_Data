@@ -1,8 +1,13 @@
 package com.epam.esm.gifts.config;
 
-import com.epam.esm.gifts.exception.CustomAccessDeniedHandler;
+import com.epam.esm.gifts.model.User;
 import com.epam.esm.gifts.security.JwtConfigurer;
+import com.epam.esm.gifts.security.UserDetailsServiceImpl;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.PrincipalExtractor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,12 +19,13 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.access.AccessDeniedHandler;
 
+@EnableOAuth2Sso
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    private final Logger logger = LogManager.getLogger();
     private final JwtConfigurer jwtConfigurer;
 
     @Autowired
@@ -50,8 +56,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public AccessDeniedHandler accessDeniedHandler(){
-        return new CustomAccessDeniedHandler();
+    public PrincipalExtractor principalExtractor(UserDetailsServiceImpl userDetailsService) {
+        return map -> {
+            /*String name = String.valueOf(map.get("name"));
+            userDetailsService.loadUserByUsername(name);*/
+            logger.info(map);
+            return new User();
+        };
     }
 
     @Bean
