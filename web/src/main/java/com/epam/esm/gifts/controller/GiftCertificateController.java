@@ -6,6 +6,7 @@ import com.epam.esm.gifts.dto.GiftCertificateAttributeDto;
 import com.epam.esm.gifts.hateaos.HateoasBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ public class GiftCertificateController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAuthority('certificates:create')")
     public GiftCertificateDto insert(@RequestBody GiftCertificateDto giftCertificateDto) {
         return giftCertificateService.create(giftCertificateDto);
     }
@@ -34,6 +36,7 @@ public class GiftCertificateController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('certificates:update')")
     public GiftCertificateDto update(@PathVariable Long id,
                                      @RequestBody GiftCertificateDto giftCertificateDto) {
         return giftCertificateService.update(id,giftCertificateDto);
@@ -53,12 +56,8 @@ public class GiftCertificateController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('certificates:delete')")
     public void deleteById(@PathVariable Long id) {
         giftCertificateService.delete(id);
-    }
-
-    @DeleteMapping("deleteTags/{id}")
-    private boolean deleteAllTagsFromGiftById(@PathVariable Long id){
-        return false;
     }
 }

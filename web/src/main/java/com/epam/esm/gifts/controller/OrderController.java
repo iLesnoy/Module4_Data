@@ -34,6 +34,7 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('orders:read')")
     public ResponseOrderDto findById(@PathVariable Long id){
         ResponseOrderDto orderDto = orderService.findById(id);
         hateoasBuilder.setLinks(orderDto);
@@ -42,6 +43,7 @@ public class OrderController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAuthority('orders:create')")
     public ResponseOrderDto create(@RequestBody RequestOrderDto orderDto){
         ResponseOrderDto responseOrderDto = orderService.create(orderDto);
         hateoasBuilder.setLinks(responseOrderDto);
