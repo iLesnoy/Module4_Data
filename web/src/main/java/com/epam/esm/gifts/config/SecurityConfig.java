@@ -58,8 +58,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public PrincipalExtractor principalExtractor(UserDetailsServiceImpl userDetailsService) {
         return map -> {
-            /*String name = String.valueOf(map.get("name"));
-            userDetailsService.loadUserByUsername(name);*/
+            userDetailsService.loadUserByUsernameOauth(map);
             logger.info(map);
             return new User();
         };

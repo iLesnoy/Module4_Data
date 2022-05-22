@@ -8,9 +8,13 @@ import com.epam.esm.gifts.hateaos.HateoasBuilder;
 import com.epam.esm.gifts.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -46,7 +50,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login/oauth")
-    public AuthenticationResponseDto oauthAuthenticate(@PathVariable AuthenticationRequestDto requestDto) {
-        return AuthenticationResponseDto.builder().username(requestDto.getName()).build();
+    public ResponseEntity<String> oauthAuthenticate(Principal principal) {
+        return ResponseEntity.ok("success");
     }
 }
