@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -50,7 +49,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login/oauth")
-    public ResponseEntity<String> oauthAuthenticate(Principal principal) {
-        return ResponseEntity.ok("success");
+    public UserDto oauthAuthenticate(Principal principal) {
+        return userService.findByName(principal.getName());
     }
 }

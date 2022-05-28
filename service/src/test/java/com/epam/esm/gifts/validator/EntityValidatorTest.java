@@ -1,6 +1,5 @@
 package com.epam.esm.gifts.validator;
 
-import com.epam.esm.gifts.dto.CustomPageable;
 import com.epam.esm.gifts.dto.GiftCertificateAttributeDto;
 import com.epam.esm.gifts.dto.RequestOrderDto;
 import com.epam.esm.gifts.dto.TagDto;
@@ -22,7 +21,6 @@ class EntityValidatorTest {
 
     private static EntityValidator validator;
     private static GiftCertificateAttributeDto attributeDto;
-    private static CustomPageable pageable;
     private static RequestOrderDto orderDto;
 
     @BeforeAll
@@ -34,7 +32,6 @@ class EntityValidatorTest {
                 .sortingFieldList(List.of("id", "name", "description"))
                 .orderSort("desc")
                 .build();
-        pageable = new CustomPageable();
         orderDto = RequestOrderDto.builder().userId(9L).certificateIdList(List.of(1L,3L,6L,8L,10L)).build();
     }
 
@@ -108,28 +105,6 @@ class EntityValidatorTest {
         boolean condition = validator.isRequestOrderDataValid(orderDto);
         assertFalse(condition);
     }
-
-    @Test
-    void isPageDataValid() {
-        boolean condition = validator.isPageDataValid(pageable);
-        assertTrue(condition);
-    }
-
-    @ParameterizedTest
-    @CsvSource(value = {"-1, 35", "146, -1"})
-    void isPageDataValidReturnsFalseWithInvalidParams(Integer size, Integer page) {
-        pageable.setSize(size);
-        pageable.setPage(page);
-        boolean condition = validator.isPageDataValid(pageable);
-        assertFalse(condition);
-    }
-
-    @Test
-    void isPageExists() {
-        boolean condition = validator.isPageExists(pageable,20L);
-        assertTrue(condition);
-    }
-
 
     private static Object[][] description(){
         return new Object[][] {
