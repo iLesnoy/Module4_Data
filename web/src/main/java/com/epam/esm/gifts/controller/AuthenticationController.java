@@ -49,7 +49,10 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login/oauth")
-    public UserDto oauthAuthenticate(Principal principal) {
-        return userService.findByName(principal.getName());
+    public AuthenticationResponseDto oauthAuthenticate(@RequestParam("access_token")String access_token,
+                                     Principal principal) {
+        return AuthenticationResponseDto.builder().username(principal.getName()).token(access_token).build();
     }
+
+
 }
