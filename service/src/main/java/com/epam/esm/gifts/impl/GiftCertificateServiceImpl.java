@@ -55,10 +55,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     @Transactional
     public GiftCertificateDto create(GiftCertificateDto giftCertificateDto) {
-        validator.checkGiftValidation(giftCertificateDto);
 
+        validator.checkGiftValidation(giftCertificateDto);
         GiftCertificate giftCertificate = giftCertificateConverter.dtoToGiftCertificate(giftCertificateDto);
-        /*giftCertificate.setId(null);*/
         setTagListCertificate(giftCertificate);
         giftCertificateRepository.save(giftCertificate);
         return giftCertificateConverter.giftCertificateToDto(giftCertificate);
@@ -106,7 +105,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             throw new SystemException(INVALID_ATTRIBUTE_LIST);
         }
         setDefaultParamsIfAbsent(attributeDto);
-        Pageable sortedPageable = buildSortedPageable(attributeDto.getSortingFieldList(), attributeDto.getOrderSort(), pageable);
+        Pageable sortedPageable = buildPageableSort(attributeDto.getSortingFieldList(), attributeDto.getOrderSort(), pageable);
         Page<GiftCertificate> certificatePage = Objects.nonNull(attributeDto.getTagNameList())
                 ? giftCertificateRepository.findByAttributes(attributeDto.getTagNameList()
                 , attributeDto.getTagNameList().size(), attributeDto.getSearchPart(), sortedPageable)
@@ -124,7 +123,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
     }
 
-    private Pageable buildSortedPageable(List<String> sortingFieldList, String orderSort, Pageable pageable) {
+    private Pageable buildPageableSort(List<String> sortingFieldList, String orderSort, Pageable pageable) {
         Sort.Direction direction = Objects.nonNull(orderSort)
                 ? Sort.Direction.fromString(orderSort)
                 : Sort.Direction.ASC;

@@ -9,10 +9,11 @@ import java.util.Objects;
 @Data
 @Builder
 public class GiftCertificateAttribute {
+
     private static final String DEFAULT_SORT = "ASC";
     private static final String DEFAULT_TAG_NAME_CONDITION = "tags.name LIKE % AND ";
-    private static final String DEFAULT_SEARCH_PART_CONDITION = "(gift_certificates.name LIKE %)";
-    private static final String DEFAULT_ORDER_CONDITION = "gift_certificates.id" + DEFAULT_SORT;
+    private static final String DEFAULT_SEARCH_PART_CONDITION = "(gift_certificate.name LIKE %)";
+    private static final String DEFAULT_ORDER_CONDITION = "gift_certificate.id" + DEFAULT_SORT;
 
     private List<String> tagNameList;
     private String searchPart;
@@ -27,7 +28,7 @@ public class GiftCertificateAttribute {
 
     public String buildQueryPartForSearchPart() {
         return Objects.nonNull(searchPart)
-                ? "(gift_certificates.name LIKE CONCAT (%" + searchPart + "%) OR gift_certificates.description LIKE CONCAT (%" + searchPart + "%)"
+                ? "(gift_certificate.name LIKE CONCAT (%" + searchPart + "%) OR gift_certificate.description LIKE CONCAT (%" + searchPart + "%)"
                 : DEFAULT_SEARCH_PART_CONDITION;
     }
 

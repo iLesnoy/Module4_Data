@@ -57,7 +57,6 @@ public class UserServiceImpl implements UserService {
     }
 
     private void setCreatedUserParams(UserDto userDto) {
-        userDto.setId(null);
         userDto.setRole(USER);
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
     }
@@ -101,11 +100,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(Long id) {
-        Optional<User> optionalUser = userRepository.findById(id);
-        if (optionalUser.isPresent()) {
-            userRepository.delete(optionalUser.get());
+        User user = findUserById(id);
+        if (orderRepository.existsOrderByUserId(user.getId())) {
+            userRepository.delete(user);
         } else {
-            throw new SystemException(NON_EXISTENT_ENTITY);
+            throw new SystemException(USED_ENTITY);
         }
     }
 

@@ -2,6 +2,7 @@ package com.epam.esm.gifts.impl;
 
 import com.epam.esm.gifts.TagService;
 import com.epam.esm.gifts.converter.TagConverter;
+import com.epam.esm.gifts.dao.GiftCertificateRepository;
 import com.epam.esm.gifts.dao.TagRepository;
 import com.epam.esm.gifts.dto.CustomPage;
 import com.epam.esm.gifts.dto.TagDto;
@@ -27,12 +28,16 @@ public class TagServiceImpl implements TagService {
     TagRepository tagRepository;
     TagConverter tagConverter;
     EntityValidator entityValidator;
+    GiftCertificateRepository giftCertificateRepository;
+
 
     @Autowired
-    public TagServiceImpl(TagRepository tagRepository, TagConverter tagConverter, EntityValidator entityValidator) {
+    public TagServiceImpl(TagRepository tagRepository, TagConverter tagConverter,
+                          EntityValidator entityValidator,GiftCertificateRepository giftCertificateRepository) {
         this.tagRepository = tagRepository;
         this.tagConverter = tagConverter;
         this.entityValidator = entityValidator;
+        this.giftCertificateRepository = giftCertificateRepository;
     }
 
     @Override
@@ -86,7 +91,7 @@ public class TagServiceImpl implements TagService {
     @Transactional
     public void delete(Long id) {
         Optional<Tag> optionalTag = tagRepository.findById(id);
-        if (optionalTag.isPresent()) {
+        if (giftCertificateRepository.findFirstByTagList_Id(id).isPresent()) {
             throw new SystemException(USED_ENTITY);
         }
         tagRepository.delete(optionalTag.get());

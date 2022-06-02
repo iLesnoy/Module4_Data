@@ -23,5 +23,5 @@ public interface GiftCertificateRepository extends JpaRepository<GiftCertificate
     Page<GiftCertificate> findByAttributes(@Param("tagNameList") List<String> tagNameList, @Param("tagNumber") long tagNumber
             , @Param("searchPart") String searchPart, Pageable pageable);
 
-    Optional<GiftCertificate> findFirstByTagListId(Long tagId);
+    Optional<GiftCertificate> findFirstByTagList_Id(Long tagId);
 }
