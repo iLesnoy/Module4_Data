@@ -64,9 +64,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     private void setTagListCertificate(GiftCertificate certificate) {
-        Set<Tag> tagSet = certificate.getTagList();
-        tagSet = tagSet.stream().map(tagService::createTag).collect(Collectors.toCollection(LinkedHashSet::new));
-        certificate.setTagList(tagSet);
+        certificate.setTagList(certificate.getTagList().stream().map(tagService::createTag)
+                .collect(Collectors.toSet()));
     }
 
     @Override
@@ -142,6 +141,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         } else {
             giftCertificateRepository.delete(optionalGiftCertificate.get());
         }
+        /*orderRepository.findFirstByCertificateListId(id).ifPresentOrElse(a->giftCertificateRepository.delete(optionalGiftCertificate.get()),
+                ()->{throw new SystemException(NON_EXISTENT_ENTITY);});*/
     }
 
     private void setUpdatedFields(GiftCertificate persistedCertificate, GiftCertificateDto updatedCertificateDto) {

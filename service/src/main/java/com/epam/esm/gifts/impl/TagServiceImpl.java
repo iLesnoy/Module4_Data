@@ -58,10 +58,10 @@ public class TagServiceImpl implements TagService {
     public TagDto update(Long id, TagDto tagDto) {
         Optional<Tag> optionalUser = tagRepository.findById(id);
         if (optionalUser.isPresent()) {
-            if (entityValidator.isNameValid(tagDto.getName())) {
-                tagRepository.save(tagConverter.dtoToTag(tagDto));
+            if (!entityValidator.isNameValid(tagDto.getName())) {
+                throw new SystemException(TAG_INVALID_NAME);
             }
-            throw new SystemException(TAG_INVALID_NAME);
+            tagRepository.save(tagConverter.dtoToTag(tagDto));
         }
         throw new SystemException(NON_EXISTENT_ENTITY);
     }
