@@ -3,11 +3,15 @@ package com.epam.esm.gifts.impl;
 import com.epam.esm.gifts.converter.GiftCertificateAttributeConverter;
 import com.epam.esm.gifts.converter.GiftCertificateConverter;
 import com.epam.esm.gifts.converter.TagConverter;
-import com.epam.esm.gifts.dao.impl.GiftCertificateDaoImpl;
-import com.epam.esm.gifts.dto.*;
+import com.epam.esm.gifts.dao.GiftCertificateRepository;
+import com.epam.esm.gifts.dao.OrderRepository;
+import com.epam.esm.gifts.dto.CustomPage;
+import com.epam.esm.gifts.dto.GiftCertificateAttributeDto;
+import com.epam.esm.gifts.dto.GiftCertificateDto;
+import com.epam.esm.gifts.dto.TagDto;
 import com.epam.esm.gifts.exception.SystemException;
 import com.epam.esm.gifts.model.GiftCertificate;
-import com.epam.esm.gifts.model.GiftCertificateAttribute;
+import com.epam.esm.gifts.model.Order;
 import com.epam.esm.gifts.model.Tag;
 import com.epam.esm.gifts.validator.EntityValidator;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,14 +21,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static org.assertj.core.api.Fail.fail;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,37 +40,37 @@ class GiftCertificateServiceImplTest {
 
     private static final long CERTIFICATE_ID = 1;
     private static final String CERTIFICATE_NAME = "certificate";
-    private static final String SEARCH_PART = "part";
     private static final String DESCRIPTION = "description";
     private static final BigDecimal PRICE = new BigDecimal("10");
     private static final int DURATION = 50;
     private static final LocalDateTime CREATION_DATE = LocalDateTime.now();
     private static final LocalDateTime LAST_UPDATE_DATE = LocalDateTime.now();
 
-    private static final String ORDER_SORT = "desc";
 
     private Tag tag;
     private TagDto tagDto;
     private Set<Tag> tagSet;
     private List<TagDto> tagDtoList;
     private GiftCertificate certificate;
+    private Order order;
     private GiftCertificateDto updatedCertificate;
     private GiftCertificateDto certificateDto;
     private List<String> sortingFieldList;
     private List<GiftCertificateDto> expectedList;
-    private CustomPageable pageable;
     private CustomPage<GiftCertificateDto> page;
 
     @InjectMocks
     private GiftCertificateServiceImpl service;
     @Mock
-    private GiftCertificateDaoImpl certificateDao;
+    OrderRepository orderRepository;
+    @Mock
+    private GiftCertificateRepository certificateDao;
     @Mock
     private EntityValidator validator;
     @Mock
-    private GiftCertificateConverter certificateConverter;
+    private Pageable pageable;
     @Mock
-    private GiftCertificateAttributeConverter attributeConverter;
+    private GiftCertificateConverter certificateConverter;
     @Mock
     private TagConverter tagConverter;
     @Mock
@@ -79,6 +84,11 @@ class GiftCertificateServiceImplTest {
         tagDtoList = new ArrayList<>(List.of(tagDto, tagDto, tagDto));
         certificate = new GiftCertificate(CERTIFICATE_ID, CERTIFICATE_NAME, DESCRIPTION, PRICE, DURATION, CREATION_DATE
                 , LAST_UPDATE_DATE, tagSet);
+        order = Order.builder().id(1L)
+                .purchaseTime((LocalDateTime.of(2001, 1, 1, 2, 3)))
+                .cost(new BigDecimal("500"))
+                .certificateList(List.of(GiftCertificate.builder().build()))
+                .build();
         certificateDto = GiftCertificateDto.builder()
                 .id(1L)
                 .name("name")
@@ -99,9 +109,6 @@ class GiftCertificateServiceImplTest {
                 .lastUpdateDate(LocalDateTime.of(2003, 1, 2, 3, 4))
                 .tagDtoList(List.of(tagDto))
                 .build();
-        pageable = new CustomPageable();
-        pageable.setPage(10);
-        pageable.setSize(1);
         page = new CustomPage<>(List.of(certificateDto), pageable, 30L);
         sortingFieldList = List.of("name", "price");
         expectedList = List.of(certificateDto, certificateDto);
@@ -109,39 +116,20 @@ class GiftCertificateServiceImplTest {
 
     @Test
     void create() {
-        doReturn(true).when(certificateDao).isGiftNameFree(Mockito.anyString());
         doReturn(certificate).when(certificateConverter).dtoToGiftCertificate(Mockito.any(GiftCertificateDto.class));
-        doReturn(tag).when(tagService).createTag(Mockito.any(Tag.class));
-        doReturn(certificate).when(certificateDao).create(Mockito.any(GiftCertificate.class));
+        doReturn(certificate).when(certificateDao).save(Mockito.any(GiftCertificate.class));
         doReturn(certificateDto).when(certificateConverter).giftCertificateToDto(Mockito.any(GiftCertificate.class));
         GiftCertificateDto actual = service.create(certificateDto);
         assertEquals(certificateDto, actual);
     }
 
 
-    @Test
-    void findCertificateCreateWhenNameIsDuplicate() {
-        SystemException thrown = assertThrows(SystemException.class, () -> service.create(certificateDto));
-        assertEquals(40911, thrown.getErrorCode());
-    }
-
-
-    @Test
-    void createThrowExceptionNullArg() {
-        try {
-            service.create(null);
-            fail("Method create should throw SystemException");
-        } catch (SystemException e) {
-            assertTrue(true);
-        }
-    }
 
     @Test
     void update() {
-        doReturn(Optional.of(certificate)).when(certificateDao).findById(Mockito.anyLong());
+        doReturn(Optional.of(certificate)).when(certificateDao).findById(anyLong());
         doReturn(tag).when(tagConverter).dtoToTag(Mockito.any(TagDto.class));
         doReturn(tag).when(tagService).createTag(Mockito.any(Tag.class));
-        doNothing().when(certificateDao).update(certificate);
         doReturn(updatedCertificate).when(certificateConverter).giftCertificateToDto(Mockito.any(GiftCertificate.class));
         GiftCertificateDto actual = service.update(1L, updatedCertificate);
         assertEquals(actual, updatedCertificate);
@@ -171,14 +159,14 @@ class GiftCertificateServiceImplTest {
     @Test
     void findById() {
         doReturn(certificateDto).when(certificateConverter).giftCertificateToDto(Mockito.any(GiftCertificate.class));
-        doReturn(Optional.of(certificate)).when(certificateDao).findById(Mockito.anyLong());
+        doReturn(Optional.of(certificate)).when(certificateDao).findById(anyLong());
         GiftCertificateDto actual = service.findById(1L);
         assertNotNull(actual);
     }
 
     @Test
     void findCertificateByIdWhenEntityNonExist() {
-        SystemException thrown = assertThrows(SystemException.class, () -> service.findById(Mockito.anyLong()));
+        SystemException thrown = assertThrows(SystemException.class, () -> service.findById(anyLong()));
         assertEquals(40410, thrown.getErrorCode());
     }
 
@@ -202,10 +190,10 @@ class GiftCertificateServiceImplTest {
 
     @Test
     void searchByParameters() {
-        doThrow(new SystemException(Mockito.anyInt())).when(service).checkSearchParams(GiftCertificateAttributeDto.builder().build(),pageable);
-        doReturn(List.of(certificate)).when(certificateDao).findByAttributes(Mockito.any(GiftCertificateAttribute.class),Mockito.anyInt(),Mockito.anyInt());
+        doThrow(new SystemException(Mockito.anyInt())).when(validator).isAttributeDtoValid(GiftCertificateAttributeDto.builder().build());
+        doReturn(List.of(certificate)).when(certificateDao).findByAttributes(Mockito.anyString(),pageable);
         doReturn(certificateDto).when(certificateConverter).giftCertificateToDto(Mockito.any(GiftCertificate.class));
-        CustomPage<GiftCertificateDto> actual = service.searchByParameters(GiftCertificateAttributeDto.builder().build(),pageable);
+        Page<GiftCertificateDto> actual = service.searchByParameters(GiftCertificateAttributeDto.builder().build(),pageable);
         assertEquals(page, actual);
     }
 
@@ -218,21 +206,22 @@ class GiftCertificateServiceImplTest {
 
     @Test
     void delete() {
-        doReturn(Optional.of(certificate)).when(certificateDao).findById(Mockito.anyLong());
+        doReturn(Optional.empty()).when(orderRepository).findFirstByCertificateListId(Mockito.anyLong());
+        doReturn(Optional.of(certificate)).when(certificateDao).findById(anyLong());
         doNothing().when(certificateDao).delete(certificate);
         service.delete(1L);
         assertTrue(true);
     }
 
-    private void findEntityNumber() {
-        doReturn(true).when(validator).isAttributeDtoValid(Mockito.any(GiftCertificateAttributeDto.class));
-        doReturn(true).when(validator).isPageDataValid(Mockito.any(CustomPageable.class));
-        doReturn(GiftCertificateAttribute.builder().build()).when(attributeConverter).convert(Mockito.any(GiftCertificateAttributeDto.class));
-        doReturn(30L).when(certificateDao).findEntityNumber(Mockito.any(GiftCertificateAttribute.class));
+    @Test
+    void deleteIfEntityUsed() {
+        doReturn(Optional.of(order)).when(orderRepository).findFirstByCertificateListId(Mockito.anyLong());
+        SystemException thrown = assertThrows(SystemException.class, () -> service.delete(Mockito.anyLong()));
+        assertEquals(40910, thrown.getErrorCode());
     }
+
 
     private void setInvalidName() {
         doReturn(false).when(validator).isNameValid(anyString());
     }
-
 }
