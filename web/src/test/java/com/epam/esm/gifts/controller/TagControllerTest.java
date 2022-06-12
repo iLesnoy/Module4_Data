@@ -1,16 +1,12 @@
 package com.epam.esm.gifts.controller;
 
-import com.epam.esm.gifts.model.Role;
 import com.epam.esm.gifts.model.Tag;
-import com.epam.esm.gifts.model.User;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.*;
 
 class TagControllerTest {
 

@@ -17,8 +17,8 @@
     <version>1.0.0</version>
 
     <properties>
-        <maven.compiler.source>16</maven.compiler.source>
-        <maven.compiler.target>16</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <spring.version>5.3.10</spring.version>
         <mockito.version>3.12.4</mockito.version>
         <junit.version>5.8.1</junit.version>

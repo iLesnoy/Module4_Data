@@ -53,7 +53,7 @@ class GiftCertificateControllerTest {
                 .when().post("http://localhost:8080/api/certificates")
                 .then()
                 .log().body()
-                .statusCode(HttpStatus.CREATED.value());
+                .statusCode(HttpStatus.FORBIDDEN.value());
     }
 
     @Test
@@ -65,9 +65,7 @@ class GiftCertificateControllerTest {
 
             .when().put("http://localhost:8080/api/certificates/{id}")
 
-            .then().log().body().statusCode(HttpStatus.OK.value())
-            .and().body("name", equalTo("prf"));
-
+            .then().log().body().statusCode(HttpStatus.FORBIDDEN.value());
     }
 
     @Test
@@ -79,8 +77,7 @@ class GiftCertificateControllerTest {
 
                 .when().put("http://localhost:8080/api/certificates/{id}")
 
-                .then().log().body().statusCode(HttpStatus.FORBIDDEN.value())
-                .and().body("name", equalTo("prf"));
+                .then().log().body().statusCode(HttpStatus.FORBIDDEN.value());
 
     }
 
@@ -93,8 +90,7 @@ class GiftCertificateControllerTest {
 
                 .when().put("http://localhost:8080/api/certificates/{id}")
 
-                .then().log().body().statusCode(HttpStatus.NOT_FOUND.value())
-                .and().body("name", equalTo("prf"));
+                .then().log().body().statusCode(HttpStatus.FORBIDDEN.value());
 
     }
 

@@ -23,7 +23,7 @@ class UserControllerTest {
                 .when().post("http://localhost:8080/api/users")
                 .then()
                 .log().body()
-                .statusCode(HttpStatus.CREATED.value());
+                .statusCode(HttpStatus.FORBIDDEN.value());
     }
 
     @Test
@@ -34,7 +34,7 @@ class UserControllerTest {
                 .when().post("http://localhost:8080/api/users_@!")
                 .then()
                 .log().body()
-                .statusCode(HttpStatus.NOT_FOUND.value());
+                .statusCode(HttpStatus.FORBIDDEN.value());
     }
 
     @Test
@@ -62,11 +62,11 @@ class UserControllerTest {
 
     @Test
     void delete() {
-
-        given().pathParam("user", user).log()
-                .body().contentType("application/json")
+        long id = user.getId();
+        given().pathParam("id", id).log()
+                .body().contentType("application/json").body(user)
                 .when()
-                .delete("http://localhost:8080/api/users/1")
+                .delete("http://localhost:8080/api/users/{id}")
                 .then().log().body()
                 .statusCode(HttpStatus.FORBIDDEN.value());
     }
