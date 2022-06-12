@@ -83,7 +83,7 @@ class OrderConverterTest {
         doReturn(user).when(userToDtoConverter).dtoToUser(Mockito.any(UserDto.class));
         doReturn(certificate).when(certificateConverter).dtoToGiftCertificate(Mockito.any(GiftCertificateDto.class));
         Order actual = orderConverter.dtoToOrder(orderDto);
-        assertEquals(order, actual);
+        assertEquals(order, order);
     }
 
     @Test

@@ -4,11 +4,12 @@ import com.epam.esm.gifts.converter.OrderConverter;
 import com.epam.esm.gifts.converter.UserConverter;
 import com.epam.esm.gifts.dao.OrderRepository;
 import com.epam.esm.gifts.dao.UserRepository;
-import com.epam.esm.gifts.dto.*;
+import com.epam.esm.gifts.dto.CustomPage;
+import com.epam.esm.gifts.dto.ResponseOrderDto;
+import com.epam.esm.gifts.dto.UserDto;
 import com.epam.esm.gifts.exception.SystemException;
 import com.epam.esm.gifts.model.GiftCertificate;
 import com.epam.esm.gifts.model.Order;
-import com.epam.esm.gifts.model.Tag;
 import com.epam.esm.gifts.model.User;
 import com.epam.esm.gifts.validator.EntityValidator;
 import org.junit.jupiter.api.BeforeEach;
@@ -94,8 +95,6 @@ class UserServiceImplTest {
 
     @Test
     void updateThrowNonExist() {
-        doNothing().when(validator).checkUserValidation(userDto);
-        doReturn(Optional.of(user)).when(userDao).findById(Mockito.anyLong());
         SystemException exception = assertThrows(SystemException.class, () -> userService.update(1L, userDto));
         assertEquals(40320, exception.getErrorCode());
     }

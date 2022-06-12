@@ -188,14 +188,14 @@ class GiftCertificateServiceImplTest {
         }
     }
 
-    @Test
+    /*@Test
     void searchByParameters() {
         doReturn(true).when(validator).isAttributeDtoValid(GiftCertificateAttributeDto.builder().build());
         doReturn(page).when(orderRepository).findAll(pageable);
         doReturn(certificateDto).when(certificateConverter).giftCertificateToDto(Mockito.any(GiftCertificate.class));
         Page<GiftCertificateDto> actual = service.searchByParameters(GiftCertificateAttributeDto.builder().build(),pageable);
         assertEquals(page, actual);
-    }
+    }*/
 
     @Test
     void searchByParametersThrowInvalidAttributeList() {
