@@ -55,7 +55,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     @Transactional
     public GiftCertificateDto create(GiftCertificateDto giftCertificateDto) {
-
         validator.checkGiftValidation(giftCertificateDto);
         GiftCertificate giftCertificate = giftCertificateConverter.dtoToGiftCertificate(giftCertificateDto);
         setTagListCertificate(giftCertificate);
