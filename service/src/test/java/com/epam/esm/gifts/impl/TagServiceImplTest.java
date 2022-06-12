@@ -77,6 +77,7 @@ class TagServiceImplTest {
 
     @Test
     void update() {
+        doReturn(Optional.of(tag)).when(tagDao).findById(Mockito.anyLong());
         doReturn(tag).when(tagConverter).dtoToTag(any(TagDto.class));
         doReturn(true).when(validator).isNameValid(anyString());
         TagDto tag = service.update(1L, tagDto);

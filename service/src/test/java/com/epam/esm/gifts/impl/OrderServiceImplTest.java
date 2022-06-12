@@ -93,7 +93,7 @@ class OrderServiceImplTest {
     void createThrowsExceptionWithInvalidRequestData() {
         doReturn(false).when(validator).isRequestOrderDataValid(any(RequestOrderDto.class));
         SystemException thrown = assertThrows(SystemException.class, () -> service.create(request));
-        assertEquals(40410, thrown.getErrorCode());
+        assertEquals(40034, thrown.getErrorCode());
     }
 
     @Test
@@ -112,8 +112,8 @@ class OrderServiceImplTest {
 
     @Test
     void findAll() {
-        doReturn(20L).when(orderDao).findAll();
-        doReturn(List.of(order,order)).when(orderDao).findAll();
+        doReturn(pageable).when(orderDao).findAll(pageable);
+        doReturn(true).when(validator).isPageExists(pageable,5L);
         doReturn(orderDto).when(converter).orderToDto(any(Order.class));
         Page<ResponseOrderDto> customPage = service.findAll(pageable);
         assertEquals(customPage.getSize(),1);

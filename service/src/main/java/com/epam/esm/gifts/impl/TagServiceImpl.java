@@ -33,7 +33,7 @@ public class TagServiceImpl implements TagService {
 
     @Autowired
     public TagServiceImpl(TagRepository tagRepository, TagConverter tagConverter,
-                          EntityValidator entityValidator,GiftCertificateRepository giftCertificateRepository) {
+                          EntityValidator entityValidator, GiftCertificateRepository giftCertificateRepository) {
         this.tagRepository = tagRepository;
         this.tagConverter = tagConverter;
         this.entityValidator = entityValidator;
@@ -56,14 +56,12 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public TagDto update(Long id, TagDto tagDto) {
-        Optional<Tag> optionalUser = tagRepository.findById(id);
-        if (optionalUser.isPresent()) {
-            if (!entityValidator.isNameValid(tagDto.getName())) {
-                throw new SystemException(TAG_INVALID_NAME);
-            }
-            tagRepository.save(tagConverter.dtoToTag(tagDto));
+        Tag tag = findTagById(id);
+        if (!entityValidator.isNameValid(tag.getName())) {
+            throw new SystemException(TAG_INVALID_NAME);
         }
-        throw new SystemException(NON_EXISTENT_ENTITY);
+        tagRepository.save(tagConverter.dtoToTag(tagDto));
+        return tagDto;
     }
 
     @Override

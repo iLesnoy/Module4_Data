@@ -1,6 +1,5 @@
 package com.epam.esm.gifts.impl;
 
-import com.epam.esm.gifts.converter.GiftCertificateAttributeConverter;
 import com.epam.esm.gifts.converter.GiftCertificateConverter;
 import com.epam.esm.gifts.converter.TagConverter;
 import com.epam.esm.gifts.dao.GiftCertificateRepository;
@@ -58,6 +57,7 @@ class GiftCertificateServiceImplTest {
     private List<String> sortingFieldList;
     private List<GiftCertificateDto> expectedList;
     private CustomPage<GiftCertificateDto> page;
+    private Page<GiftCertificate> giftCertificates;
 
     @InjectMocks
     private GiftCertificateServiceImpl service;
@@ -190,8 +190,8 @@ class GiftCertificateServiceImplTest {
 
     @Test
     void searchByParameters() {
-        doThrow(new SystemException(Mockito.anyInt())).when(validator).isAttributeDtoValid(GiftCertificateAttributeDto.builder().build());
-        doReturn(List.of(certificate)).when(certificateDao).findByAttributes(Mockito.anyString(),pageable);
+        doReturn(true).when(validator).isAttributeDtoValid(GiftCertificateAttributeDto.builder().build());
+        doReturn(page).when(orderRepository).findAll(pageable);
         doReturn(certificateDto).when(certificateConverter).giftCertificateToDto(Mockito.any(GiftCertificate.class));
         Page<GiftCertificateDto> actual = service.searchByParameters(GiftCertificateAttributeDto.builder().build(),pageable);
         assertEquals(page, actual);
