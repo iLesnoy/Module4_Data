@@ -40,8 +40,8 @@ class OrderConverterTest {
 
     @BeforeEach
     public void setUp() {
-        user = User.builder().id(1L).name("User").build();
-        userDto = UserDto.builder().id(1L).name("User").build();
+        user = User.builder().id(1L).name("Userre").build();
+        userDto = UserDto.builder().id(4L).name("Userrfe").build();
         certificateDto = GiftCertificateDto.builder()
                 .id(1L)
                 .name("name")
