@@ -79,14 +79,6 @@ class OrderServiceImplTest {
     }
 
 
-
-    @Test
-    void createThrowsExceptionWithInvalidRequestData() {
-        doReturn(false).when(validator).isRequestOrderDataValid(any(RequestOrderDto.class));
-        SystemException thrown = assertThrows(SystemException.class, () -> service.create(request));
-        assertEquals(40034, thrown.getErrorCode());
-    }
-
     @Test
     void update() {
         UnsupportedOperationException thrown = assertThrows(UnsupportedOperationException.class, () -> service.update(1L, orderDto));
