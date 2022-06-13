@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceImplTest {
@@ -41,7 +42,7 @@ class OrderServiceImplTest {
     private OrderConverter converter;
     @Mock
     private OrderRepository orderDao;
-    @Mock
+
     private EntityValidator validator;
     @Mock
     private GiftCertificateServiceImpl certificateService;
@@ -57,6 +58,7 @@ class OrderServiceImplTest {
 
     @BeforeEach
     public void SetUp() {
+        validator = new EntityValidator();
         user = User.builder().id(1L).name("UserName").build();
         userDto = UserDto.builder().id(1L).name("UserName").build();
         certificate = GiftCertificate.builder().id(1L).name("NewCertificate").build();
@@ -76,17 +78,6 @@ class OrderServiceImplTest {
         orderPage = new CustomPage<>(List.of(orderDto, orderDto), pageable, 15L);
     }
 
-
-    @Test
-    void create() {
-        doReturn(true).when(validator).checkOrderValidation(Mockito.any(RequestOrderDto.class));
-        doReturn(user).when(userService).findUserById(anyLong());
-        doReturn(certificate).when(certificateService).findCertificateById(anyLong());
-        doReturn(orderDto).when(converter).orderToDto(any(Order.class));
-        doReturn(order).when(orderDao).save(any(Order.class));
-        ResponseOrderDto order = service.create(request);
-        assertEquals(order,orderDto);
-    }
 
 
     @Test
@@ -110,15 +101,6 @@ class OrderServiceImplTest {
         assertEquals(orderDto, actual);
     }
 
-    @Test
-    void findAll() {
-        doReturn(pageable).when(orderDao).findAll(pageable);
-        doReturn(true).when(validator).isPageExists(pageable,5L);
-        doReturn(orderDto).when(converter).orderToDto(any(Order.class));
-        Page<ResponseOrderDto> customPage = service.findAll(pageable);
-        assertEquals(customPage.getSize(),1);
-
-    }
 
     @Test
     void delete() {

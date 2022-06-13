@@ -82,13 +82,10 @@ class UserServiceImplTest {
     }
 
     @Test
-    void create() {
-        doReturn(true).when(validator).isNameValid(anyString());
-        doReturn(user).when(userConverter).dtoToUser(any(UserDto.class));
-        doReturn(userDto).when(userConverter).userToDto(any(User.class));
-        doReturn(user).when(userDao).save(any(User.class));
-        UserDto actual = userService.create(userDto);
-        assertEquals(userDto, actual);
+    void createThrowInvalidName() {
+        doReturn(false).when(validator).isNameValid(anyString());
+        SystemException exception = assertThrows(SystemException.class, () -> userService.create(userDto));
+        assertEquals(40320, exception.getErrorCode());
     }
 
 
@@ -115,12 +112,11 @@ class UserServiceImplTest {
     }
 
     @Test
-    void findAll() {
-        /*doReturn(userPage).when(userDao).findAll(pageable);
-        doReturn(true).when(validator).isPageExists(any(Pageable.class), anyLong());
-        doReturn(userDto).when(userConverter).userToDto(Mockito.any(User.class));
-        Page<UserDto> actual = userService.findAll(pageable);
-        assertEquals(pageable, actual);*/
+    void findAllInvalidPage() {
+        doReturn(userPage).when(userDao).findAll(pageable);
+        doReturn(false).when(validator).isPageExists(any(Pageable.class), anyLong());
+        SystemException exception = assertThrows(SystemException.class, () -> userService.findAll(pageable));
+        assertEquals(40051, exception.getErrorCode());
     }
 
     @Test
@@ -154,17 +150,6 @@ class UserServiceImplTest {
         doReturn(Optional.of(user)).when(userDao).findByName(Mockito.anyString());
         UserDto actual = userService.findByName("papa");
         assertEquals(userDto, actual);
-    }
-
-    @Test
-    void findUserOrderList() {
-        /*doReturn(true).when(userDao).existsById(anyLong());
-        doReturn(orderPage).when(orderRepository).findOrderByUserId(Mockito.anyLong(), eq(pageable));
-        doReturn(true).when(validator).isPageExists(any(Pageable.class), anyLong());
-
-        doReturn(responseOrderDto).when(orderConverter).orderToDto(Mockito.any(Order.class));
-        Page<ResponseOrderDto> actual = userService.findUserOrderList(1L, Pageable.ofSize(2));
-        assertEquals(orders, actual);*/
     }
 
 }

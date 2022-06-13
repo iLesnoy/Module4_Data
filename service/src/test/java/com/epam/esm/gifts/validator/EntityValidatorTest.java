@@ -109,17 +109,10 @@ class EntityValidatorTest {
     }
 
 
-    @Test
-    void isPageExists() {
-        boolean condition = validator.isPageExists(pageable,20L);
-        assertTrue(condition);
-    }
-
-
     private static Object[][] description(){
         return new Object[][] {
                 {"description",true},
-                {"descr1",false},
+                {"descr#",false},
                 {"name++C+",false},
                 {"hello?0_/",false}
         };
@@ -133,8 +126,8 @@ class EntityValidatorTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"43.56", "51", "02", "443", "100", "0.12"})
-    void isPriceValidReturnsTrueWithInsertedValidPrice(String strPrice) {
+    @ValueSource(strings = {"43.56", "51", "2", "443", "100", "0.12"})
+    void isPriceValidReturnsTrueWithInserteInValidPrice(String strPrice) {
         BigDecimal validPrice = new BigDecimal(strPrice);
         boolean condition = validator.isPriceValid(validPrice);
         assertTrue(condition);

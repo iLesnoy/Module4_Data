@@ -92,14 +92,6 @@ class TagServiceImplTest {
         assertEquals(40020, thrown.getErrorCode());
     }
 
-    @Test
-    void findAll() {
-        doReturn(tagPage).when(tagDao).findAll(pageable);
-        doReturn(true).when(validator).isPageExists(any(Pageable.class), anyLong());
-        doReturn(tagDto).when(tagConverter).tagToDto(any(Tag.class));
-        Page<TagDto> actual = service.findAll(pageable);
-        assertEquals(tagPage, actual);
-    }
 
     @Test
     void findAllPageNotExist() {
