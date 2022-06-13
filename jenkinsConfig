@@ -1,6 +1,5 @@
 pipeline {
-node()
-  options {
+  agent{ label 'dev'}
     buildDiscarder(logRotator(numToKeepStr: '5'))
   }
   stages {
