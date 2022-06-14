@@ -54,6 +54,11 @@ public class GiftCertificateController {
         return page;
     }
 
+    @GetMapping("/{test}")
+    public String test(@PathVariable String test) {
+        return test;
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAuthority('certificates:delete')")
