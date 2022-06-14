@@ -15,6 +15,7 @@
     <groupId>com.epam.esm.gifts</groupId>
     <artifactId>web</artifactId>
     <version>1.0.0</version>
+    <packaging>war</packaging>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
