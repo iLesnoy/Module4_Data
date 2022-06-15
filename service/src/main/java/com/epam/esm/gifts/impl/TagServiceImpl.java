@@ -89,10 +89,12 @@ public class TagServiceImpl implements TagService {
     @Transactional
     public void delete(Long id) {
         Optional<Tag> optionalTag = tagRepository.findById(id);
-        if (giftCertificateRepository.findFirstByTagList_Id(id).isPresent()) {
-            throw new SystemException(USED_ENTITY);
-        }
-        tagRepository.delete(optionalTag.get());
+        if (optionalTag.isPresent()) {
+            if (giftCertificateRepository.findFirstByTagList_Id(id).isPresent()) {
+                throw new SystemException(USED_ENTITY);
+            }
+            tagRepository.delete(optionalTag.get());
+        }else throw new SystemException(NON_EXISTENT_ENTITY);
     }
 
 }

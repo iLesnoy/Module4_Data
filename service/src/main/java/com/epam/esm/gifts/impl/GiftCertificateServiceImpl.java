@@ -135,11 +135,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Transactional
     public void delete(Long id) {
         Optional<GiftCertificate> optionalGiftCertificate = giftCertificateRepository.findById(id);
-        if (orderRepository.findFirstByCertificateListId(id).isPresent()) {
-            throw new SystemException(USED_ENTITY);
-        } else {
-            giftCertificateRepository.delete(optionalGiftCertificate.get());
-        }
+        if(optionalGiftCertificate.isPresent()) {
+            if (orderRepository.findFirstByCertificateListId(id).isPresent()) {
+                throw new SystemException(USED_ENTITY);
+            } else {
+                giftCertificateRepository.delete(optionalGiftCertificate.get());
+            }
+        }else throw new SystemException(NON_EXISTENT_ENTITY);
         /*orderRepository.findFirstByCertificateListId(id).ifPresentOrElse(a->giftCertificateRepository.delete(optionalGiftCertificate.get()),
                 ()->{throw new SystemException(NON_EXISTENT_ENTITY);});*/
     }
