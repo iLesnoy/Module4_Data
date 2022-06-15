@@ -57,9 +57,11 @@ public class EntityValidator {
     }
 
     public boolean isPriceValid(BigDecimal price) {
-        return price != null ?
-                Objects.nonNull(price) && matchPriceToRegex(price)
-                : Objects.isNull(price) || matchPriceToRegex(price);
+        if (Objects.nonNull(price)) {
+            return matchPriceToRegex(price);
+        } else {
+            return false;
+        }
     }
 
     public boolean isRequestOrderDataValid(RequestOrderDto orderDto) {
@@ -68,11 +70,14 @@ public class EntityValidator {
     }
 
 
-
-    private boolean checkNumber(Number number) {
-        return String.valueOf(number).matches(PAGE_REGEX);
-    }
-
+    /**
+     * this method is responsible for checking is the page exists
+     * @param pageable - Abstract interface for pagination information(number,size,sort).
+     * @param totalNumber - total number of elements from db
+     * lastPage = counts the last page based on the passed parameters : divides the total number
+     *                    of pages by the page number. (the answer is rounded up)
+     * @return  true if the page number is less than the counted lastPage
+     */
     public boolean isPageExists(Pageable pageable, Long totalNumber) {
         if (pageable.getPageNumber() == 0) {
             return true;
@@ -95,11 +100,11 @@ public class EntityValidator {
     }
 
     public boolean isNameValid(String name) {
-        return isStringFieldValid(name, NAME_REGEX);
+        return Objects.nonNull(name) && isStringFieldValid(name, NAME_REGEX);
     }
 
     public boolean isDescriptionValid(String description) {
-        return isStringFieldValid(description, DESCRIPTION_REGEX);
+        return Objects.nonNull(description) && isStringFieldValid(description, DESCRIPTION_REGEX);
     }
 
     private boolean isStringFieldValid(String field, String regex) {
@@ -133,6 +138,8 @@ public class EntityValidator {
             throw new SystemException(EMPTY_OBJECT);
         } else if (!isNameValid(userDto.getName())) {
             throw new SystemException(USER_INVALID_NAME);
+        } else if (!isPasswordValid(userDto.getPassword())) {
+            throw new SystemException(USER_INVALID_PASSWORD);
         }
     }
 
