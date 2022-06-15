@@ -134,11 +134,9 @@ class EntityValidatorTest {
     }
 
     @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = {"5545.34", "5", "0", "450", "10000", "0.9"})
+    @ValueSource(strings = {"5545.34", "5", "1", "450", "10000", "0.9"})
     void isSoftPriceValidReturnsTrueWithValidPrice(String strPrice) {
-        BigDecimal validPrice = strPrice != null ? new BigDecimal(strPrice) : null;
-        boolean condition = validator.isPriceValid(validPrice);
+        boolean condition = validator.isPriceValid(new BigDecimal(strPrice));
         assertTrue(condition);
     }
 
