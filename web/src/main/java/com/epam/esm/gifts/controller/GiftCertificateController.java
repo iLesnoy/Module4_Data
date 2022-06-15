@@ -29,8 +29,10 @@ public class GiftCertificateController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAuthority('certificates:create')")
-    public GiftCertificateDto insert(@RequestBody GiftCertificateDto giftCertificateDto) {
-        return giftCertificateService.create(giftCertificateDto);
+    public GiftCertificateDto create(@RequestBody GiftCertificateDto giftCertificateDto) {
+        GiftCertificateDto created = giftCertificateService.create(giftCertificateDto);
+        hateoasBuilder.setLinks(giftCertificateDto);
+        return created;
     }
 
 
@@ -39,12 +41,16 @@ public class GiftCertificateController {
     @PreAuthorize("hasAuthority('certificates:update')")
     public GiftCertificateDto update(@PathVariable Long id,
                                      @RequestBody GiftCertificateDto giftCertificateDto) {
-        return giftCertificateService.update(id,giftCertificateDto);
+        GiftCertificateDto updated = giftCertificateService.update(id, giftCertificateDto);
+        hateoasBuilder.setLinks(updated);
+        return updated;
     }
 
     @GetMapping("/{id}")
     public GiftCertificateDto findById(@PathVariable Long id) {
-        return giftCertificateService.findById(id);
+        GiftCertificateDto certificateDto = giftCertificateService.findById(id);
+        hateoasBuilder.setLinks(certificateDto);
+        return certificateDto;
     }
 
     @GetMapping
@@ -54,13 +60,8 @@ public class GiftCertificateController {
         return page;
     }
 
-    @GetMapping("/{test}")
-    public String test(@PathVariable String test) {
-        return test;
-    }
-
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasAuthority('certificates:delete')")
     public void deleteById(@PathVariable Long id) {
         giftCertificateService.delete(id);
