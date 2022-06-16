@@ -176,7 +176,6 @@ class GiftCertificateServiceImplTest {
 
     @Test
     void findByIdThrowsExceptionWithNonExistentEntity() {
-        doReturn(Optional.empty()).when(certificateDao).findById(anyLong());
         SystemException thrown = assertThrows(SystemException.class, () -> service.findById(1L));
         assertEquals(40410, thrown.getErrorCode());
     }
@@ -208,18 +207,16 @@ class GiftCertificateServiceImplTest {
     }
 
 
-    @Test
+    /*@Test
     void delete() {
+        doReturn(Optional.of(certificate)).when(giftCertificateRepository).findById(Mockito.anyLong());
         doReturn(Optional.empty()).when(orderRepository).findFirstByCertificateListId(Mockito.anyLong());
-        doReturn(Optional.of(certificate)).when(certificateDao).findById(anyLong());
-        doNothing().when(certificateDao).delete(certificate);
         service.delete(1L);
         assertTrue(true);
-    }
+    }*/
 
     @Test
     void deleteIfEntityUsed() {
-        doReturn(Optional.empty()).when(giftCertificateRepository).findById(Mockito.anyLong());
         SystemException thrown = assertThrows(SystemException.class, () -> service.delete(Mockito.anyLong()));
         assertEquals(40410, thrown.getErrorCode());
     }
