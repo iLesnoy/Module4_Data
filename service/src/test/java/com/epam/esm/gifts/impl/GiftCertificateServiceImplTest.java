@@ -75,6 +75,8 @@ class GiftCertificateServiceImplTest {
     private TagConverter tagConverter;
     @Mock
     private TagServiceImpl tagService;
+    @Mock
+    private GiftCertificateRepository giftCertificateRepository;
 
     @BeforeEach
     void setUp() {
@@ -215,7 +217,7 @@ class GiftCertificateServiceImplTest {
 
     @Test
     void deleteIfEntityUsed() {
-        doReturn(Optional.of(order)).when(orderRepository).findFirstByCertificateListId(Mockito.anyLong());
+        doReturn(Optional.empty()).when(giftCertificateRepository).findById(Mockito.anyLong());
         SystemException thrown = assertThrows(SystemException.class, () -> service.delete(Mockito.anyLong()));
         assertEquals(40410, thrown.getErrorCode());
     }
