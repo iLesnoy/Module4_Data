@@ -217,7 +217,7 @@ class GiftCertificateServiceImplTest {
     void deleteIfEntityUsed() {
         doReturn(Optional.of(order)).when(orderRepository).findFirstByCertificateListId(Mockito.anyLong());
         SystemException thrown = assertThrows(SystemException.class, () -> service.delete(Mockito.anyLong()));
-        assertEquals(40910, thrown.getErrorCode());
+        assertEquals(40410, thrown.getErrorCode());
     }
 
 
