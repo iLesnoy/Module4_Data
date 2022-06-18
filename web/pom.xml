@@ -13,14 +13,17 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.epam.esm.gifts</groupId>
-    <artifactId>web</artifactId>
+    <artifactId>gift_system</artifactId>
     <version>1.0.0</version>
-    <name>gifts</name>
     <packaging>war</packaging>
 
+    <name>gift_system</name>
+
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
@@ -66,32 +69,15 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.2</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
-
-    <profiles>
-    <profile>
-        <!-- When built in OpenShift the 'openshift' profile will be used when
-            invoking mvn. -->
-        <!-- Use this profile for any OpenShift specific customization your app
-            will need. -->
-        <!-- By default that is to put the resulting archive into the 'webapps'
-            folder. -->
-        <!-- http://maven.apache.org/guides/mini/guide-building-for-different-environments.html -->
-        <id>openshift</id>
-        <build>
-            <finalName>gifts</finalName>
-            <plugins>
-                <plugin>
-                    <artifactId>maven-war-plugin</artifactId>
-                    <version>3.2.2</version>
-                    <configuration>
-                        <outputDirectory>webapps</outputDirectory>
-                        <warName>ROOT</warName>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </build>
-    </profile>
-    </profiles>
 </project>
