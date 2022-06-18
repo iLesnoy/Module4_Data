@@ -13,11 +13,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.epam.esm.gifts</groupId>
-    <artifactId>gift_system</artifactId>
+    <artifactId>web</artifactId>
     <version>1.0.0</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
 
-    <name>gift_system</name>
+    <name>web</name>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

@@ -207,13 +207,13 @@ class GiftCertificateServiceImplTest {
     }
 
 
-    /*@Test
+    @Test
     void delete() {
         doReturn(Optional.of(certificate)).when(giftCertificateRepository).findById(Mockito.anyLong());
         doReturn(Optional.empty()).when(orderRepository).findFirstByCertificateListId(Mockito.anyLong());
         service.delete(1L);
         assertTrue(true);
-    }*/
+    }
 
     @Test
     void deleteIfEntityUsed() {
