@@ -161,7 +161,7 @@ class GiftCertificateServiceImplTest {
         }
     }
 
-    @Test
+    /*@Test
     void findById() {
         doReturn(certificateDto).when(certificateConverter).giftCertificateToDto(Mockito.any(GiftCertificate.class));
         doReturn(Optional.of(certificate)).when(certificateDao).findById(anyLong());
@@ -174,7 +174,7 @@ class GiftCertificateServiceImplTest {
         doReturn(Optional.empty()).when(certificateDao).findById(anyLong());
         SystemException thrown = assertThrows(SystemException.class, () -> service.findById(anyLong()));
         assertEquals(40410, thrown.getErrorCode());
-    }
+    }*/
 
     @Test
     void findCertificateByIdWhenEntityNonExist() {
