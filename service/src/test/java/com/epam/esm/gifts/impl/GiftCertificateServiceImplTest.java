@@ -170,6 +170,13 @@ class GiftCertificateServiceImplTest {
     }
 
     @Test
+    void findByIdUserNotFound() {
+        doReturn(Optional.empty()).when(certificateDao).findById(anyLong());
+        SystemException thrown = assertThrows(SystemException.class, () -> service.findById(anyLong()));
+        assertEquals(40410, thrown.getErrorCode());
+    }
+
+    @Test
     void findCertificateByIdWhenEntityNonExist() {
         SystemException thrown = assertThrows(SystemException.class, () -> service.findById(anyLong()));
         assertEquals(40410, thrown.getErrorCode());
