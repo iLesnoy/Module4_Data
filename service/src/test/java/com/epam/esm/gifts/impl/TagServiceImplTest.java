@@ -1,10 +1,9 @@
 package com.epam.esm.gifts.impl;
 
-
 import com.epam.esm.gifts.converter.TagConverter;
-import com.epam.esm.gifts.dao.impl.TagDaoImpl;
+import com.epam.esm.gifts.dao.GiftCertificateRepository;
+import com.epam.esm.gifts.dao.TagRepository;
 import com.epam.esm.gifts.dto.CustomPage;
-import com.epam.esm.gifts.dto.CustomPageable;
 import com.epam.esm.gifts.dto.TagDto;
 import com.epam.esm.gifts.exception.SystemException;
 import com.epam.esm.gifts.model.GiftCertificate;
@@ -15,7 +14,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,26 +33,26 @@ class TagServiceImplTest {
     @InjectMocks
     private TagServiceImpl service;
     @Mock
-    private TagDaoImpl tagDao;
+    private TagRepository tagDao;
     @Mock
     private EntityValidator validator;
     @Mock
     private TagConverter tagConverter;
+    @Mock
+    private Pageable pageable;
+    @Mock
+    private GiftCertificateRepository giftCertificateRepository;
 
     private Tag tag;
     private TagDto tagDto;
-    private CustomPageable pageable;
     private GiftCertificate giftCertificate;
-    private CustomPage<TagDto> tagPage;
+    private Page<TagDto> tagPage;
 
     @BeforeEach
     void setUp() {
-        giftCertificate= GiftCertificate.builder().id(1L).name("name").build();
+        giftCertificate = GiftCertificate.builder().id(1L).name("name").build();
         tag = Tag.builder().id(1L).name("name").build();
         tagDto = TagDto.builder().id(1L).name("name").build();
-        pageable = new CustomPageable();
-        pageable.setPage(5);
-        pageable.setSize(1);
         tagPage = new CustomPage<>(List.of(tagDto, tagDto), pageable, 15L);
     }
 
@@ -73,9 +75,9 @@ class TagServiceImplTest {
     }
 
 
-
     @Test
     void update() {
+        doReturn(Optional.of(tag)).when(tagDao).findById(Mockito.anyLong());
         doReturn(tag).when(tagConverter).dtoToTag(any(TagDto.class));
         doReturn(true).when(validator).isNameValid(anyString());
         TagDto tag = service.update(1L, tagDto);
@@ -90,33 +92,15 @@ class TagServiceImplTest {
         assertEquals(40020, thrown.getErrorCode());
     }
 
-    @Test
-    void findAll() {
-        doReturn(true).when(validator).isPageDataValid(any(CustomPageable.class));
-        doReturn(15L).when(tagDao).findEntityNumber();
-        doReturn(true).when(validator).isPageExists(any(CustomPageable.class), anyLong());
-        doReturn(List.of(tag, tag)).when(tagDao).findAll(anyInt(), anyInt());
-        doReturn(tagDto).when(tagConverter).tagToDto(any(Tag.class));
-        CustomPage<TagDto> actual = service.findAll(pageable);
-        assertEquals(tagPage, actual);
-    }
 
     @Test
     void findAllPageNotExist() {
-        doReturn(true).when(validator).isPageDataValid(any(CustomPageable.class));
-        doReturn(15L).when(tagDao).findEntityNumber();
-        doReturn(false).when(validator).isPageExists(any(CustomPageable.class), anyLong());
-        doReturn(List.of(tag, tag)).when(tagDao).findAll(anyInt(), anyInt());
+        doReturn(tagPage).when(tagDao).findAll(pageable);
+        doReturn(false).when(validator).isPageExists(any(Pageable.class), anyLong());
         SystemException thrown = assertThrows(SystemException.class, () -> service.findAll(pageable));
         assertEquals(40051, thrown.getErrorCode());
     }
 
-    @Test
-    void findAllWithInvalidPageable() {
-        doReturn(false).when(validator).isPageDataValid(any(CustomPageable.class));
-        SystemException thrown = assertThrows(SystemException.class, () -> service.findAll(pageable));
-        assertEquals(40050, thrown.getErrorCode());
-    }
 
     @Test
     void findById() {
@@ -135,18 +119,18 @@ class TagServiceImplTest {
 
     @Test
     void deleteThrowsExceptionWithNonExistentEntity() {
-        doReturn(Optional.empty()).when(tagDao).findById(anyLong());
+        doReturn(Optional.of(tag)).when(tagDao).findById(anyLong());
+        doReturn(Optional.of(giftCertificate)).when(giftCertificateRepository).findFirstByTagList_Id(Mockito.anyLong());
         SystemException thrown = assertThrows(SystemException.class, () -> service.delete(1L));
-        assertEquals(40410, thrown.getErrorCode());
+        assertEquals(40910, thrown.getErrorCode());
     }
 
     @Test
     void delete() {
         doReturn(Optional.of(tag)).when(tagDao).findById(anyLong());
-        doReturn(List.of(giftCertificate)).when(tagDao).isTagUsed(tag);
+        doReturn(Optional.empty()).when(giftCertificateRepository).findFirstByTagList_Id(Mockito.anyLong());
         doNothing().when(tagDao).delete(any(Tag.class));
         service.delete(1L);
         assertTrue(true);
     }
-
 }

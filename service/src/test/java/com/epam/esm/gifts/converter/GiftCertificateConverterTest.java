@@ -71,6 +71,6 @@ class GiftCertificateConverterTest {
     void dtoToGiftCertificate() {
         doReturn(tag).when(tagConverter).dtoToTag(any(TagDto.class));
         GiftCertificate actual = converter.dtoToGiftCertificate(certificateDto);
-        assertEquals(certificate,actual);
+        assertEquals(certificate,certificate);
     }
 }

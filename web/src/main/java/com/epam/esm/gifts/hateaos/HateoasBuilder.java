@@ -5,6 +5,7 @@ import com.epam.esm.gifts.controller.OrderController;
 import com.epam.esm.gifts.controller.TagController;
 import com.epam.esm.gifts.controller.UserController;
 import com.epam.esm.gifts.dto.*;
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.stereotype.Component;
 
@@ -26,8 +27,9 @@ public class HateoasBuilder {
     private static final String CERTIFICATES = "certificates";
     private static final String ORDERS = "orders";
     private static final String USERS = "users";
+    private static final int DEFAULT_PAGE_SIZE = 2;
 
-    private static final CustomPageable DEFAULT_PAGEABLE = new CustomPageable();
+    private static final Pageable DEFAULT_PAGEABLE = Pageable.ofSize(DEFAULT_PAGE_SIZE);
 
     public void setLinks(TagDto tagDto) {
         setCommonLinks(TagController.class, tagDto, tagDto.getId(), TAGS, SELF, DELETE);

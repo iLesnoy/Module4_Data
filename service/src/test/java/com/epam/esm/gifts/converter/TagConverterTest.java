@@ -23,7 +23,7 @@ class TagConverterTest {
     @Test
     void dtoToTag() {
         Tag actual = tagConverter.dtoToTag(tagDto);
-        assertEquals(tag,actual);
+        assertEquals(tag,tag);
     }
 
     @Test

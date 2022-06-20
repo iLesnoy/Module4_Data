@@ -2,6 +2,7 @@ package com.epam.esm.gifts.validator;
 
 import com.epam.esm.gifts.dto.*;
 import com.epam.esm.gifts.exception.SystemException;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -18,6 +19,7 @@ public class EntityValidator {
     private static final String NAME_REGEX = "[\\p{Alpha}А-Яа-я]{2,65}";
     private static final String PRICE_REGEX = "^(\\d+|[\\.\\,]?\\d+){1,2}$";
     private static final String DESCRIPTION_REGEX = "[\\p{Alpha}А-Яа-я\\d-.,:;!?()\" ]{2,225}";
+    private static final String PASSWORD_REGEX= "^(?=.*[0-9])(?=.*[a-z]||[A-Z]).{8,20}$";
     private static final Set<String> AVAILABLE_SORT_ORDERS = Set.of("asc", "desc");
     private static final Set<String> AVAILABLE_SORTING_FIELDS = Set.of("id", "name", "description"
             , "price", "duration", "createDate", "lastUpdateDate");
@@ -55,9 +57,11 @@ public class EntityValidator {
     }
 
     public boolean isPriceValid(BigDecimal price) {
-        return price != null ?
-                Objects.nonNull(price) && matchPriceToRegex(price)
-                : Objects.isNull(price) || matchPriceToRegex(price);
+        if (Objects.nonNull(price)) {
+            return matchPriceToRegex(price);
+        } else {
+            return false;
+        }
     }
 
     public boolean isRequestOrderDataValid(RequestOrderDto orderDto) {
@@ -66,22 +70,20 @@ public class EntityValidator {
     }
 
 
-    public boolean isPageDataValid(CustomPageable pageable) {
-        Integer size = pageable.getSize();
-        Integer page = pageable.getPage();
-        return Objects.nonNull(page) && Objects.nonNull(size) && size != 0 && checkNumber(page) && checkNumber(size);
-    }
-
-    private boolean checkNumber(Number number) {
-        return String.valueOf(number).matches(PAGE_REGEX);
-    }
-
-    public boolean isPageExists(CustomPageable pageable, Long totalNumber) {
-        if (pageable.getPage() == 0) {
+    /**
+     * this method is responsible for checking is the page exists
+     * @param pageable - Abstract interface for pagination information(number,size,sort).
+     * @param totalNumber - total number of elements from db
+     * lastPage = counts the last page based on the passed parameters : divides the total number
+     *                    of pages by the page number. (the answer is rounded up)
+     * @return  true if the page number is less than the counted lastPage
+     */
+    public boolean isPageExists(Pageable pageable, Long totalNumber) {
+        if (pageable.getPageNumber() == 0) {
             return true;
         }
-        long lastPage = (long) Math.ceil((double) totalNumber / pageable.getSize());
-        return pageable.getPage() < lastPage;
+        long lastPage = (long) Math.ceil((double) totalNumber / pageable.getPageNumber());
+        return pageable.getPageNumber() < lastPage;
     }
 
     private boolean matchPriceToRegex(BigDecimal price) {
@@ -98,17 +100,21 @@ public class EntityValidator {
     }
 
     public boolean isNameValid(String name) {
-        return isStringFieldValid(name, NAME_REGEX);
+        return Objects.nonNull(name) && isStringFieldValid(name, NAME_REGEX);
     }
 
     public boolean isDescriptionValid(String description) {
-        return isStringFieldValid(description, DESCRIPTION_REGEX);
+        return Objects.nonNull(description) && isStringFieldValid(description, DESCRIPTION_REGEX);
     }
 
     private boolean isStringFieldValid(String field, String regex) {
         if (isNotNullAndBlank(field) && field.matches(regex)) {
             return true;
         } else return Objects.isNull(field) || (!field.isBlank() && field.matches(regex));
+    }
+
+    public boolean isPasswordValid(String password) {
+        return password != null && password.matches(PASSWORD_REGEX);
     }
 
     public void checkGiftValidation(GiftCertificateDto giftCertificateDto) {
@@ -132,13 +138,8 @@ public class EntityValidator {
             throw new SystemException(EMPTY_OBJECT);
         } else if (!isNameValid(userDto.getName())) {
             throw new SystemException(USER_INVALID_NAME);
-        }
-    }
-
-
-    public void checkPageableValidation(CustomPageable pageable, long totalOrderNumber) {
-        if (!isPageDataValid(pageable)) {
-            throw new SystemException(INVALID_DATA_OF_PAGE);
+        } else if (!isPasswordValid(userDto.getPassword())) {
+            throw new SystemException(USER_INVALID_PASSWORD);
         }
     }
 

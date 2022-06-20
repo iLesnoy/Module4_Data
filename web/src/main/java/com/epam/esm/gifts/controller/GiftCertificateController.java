@@ -1,11 +1,12 @@
 package com.epam.esm.gifts.controller;
 
 import com.epam.esm.gifts.GiftCertificateService;
-import com.epam.esm.gifts.dto.CustomPage;
-import com.epam.esm.gifts.dto.CustomPageable;
 import com.epam.esm.gifts.dto.GiftCertificateDto;
 import com.epam.esm.gifts.dto.GiftCertificateAttributeDto;
 import com.epam.esm.gifts.hateaos.HateoasBuilder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,38 +28,42 @@ public class GiftCertificateController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public GiftCertificateDto insert(@RequestBody GiftCertificateDto giftCertificateDto) {
-        return giftCertificateService.create(giftCertificateDto);
+    @PreAuthorize("hasAuthority('certificates:create')")
+    public GiftCertificateDto create(@RequestBody GiftCertificateDto giftCertificateDto) {
+        GiftCertificateDto created = giftCertificateService.create(giftCertificateDto);
+        hateoasBuilder.setLinks(giftCertificateDto);
+        return created;
     }
 
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAuthority('certificates:update')")
     public GiftCertificateDto update(@PathVariable Long id,
                                      @RequestBody GiftCertificateDto giftCertificateDto) {
-        return giftCertificateService.update(id,giftCertificateDto);
+        GiftCertificateDto updated = giftCertificateService.update(id, giftCertificateDto);
+        hateoasBuilder.setLinks(updated);
+        return updated;
     }
 
     @GetMapping("/{id}")
     public GiftCertificateDto findById(@PathVariable Long id) {
-        return giftCertificateService.findById(id);
+        GiftCertificateDto certificateDto = giftCertificateService.findById(id);
+        hateoasBuilder.setLinks(certificateDto);
+        return certificateDto;
     }
 
     @GetMapping
-    public CustomPage<GiftCertificateDto> findByAttributes(GiftCertificateAttributeDto attribute, CustomPageable pageable) {
-        CustomPage<GiftCertificateDto> page = giftCertificateService.searchByParameters(attribute, pageable);
+    public Page<GiftCertificateDto> findByAttributes(GiftCertificateAttributeDto attribute, Pageable pageable) {
+        Page<GiftCertificateDto> page = giftCertificateService.searchByParameters(attribute, pageable);
         page.getContent().forEach(hateoasBuilder::setLinks);
         return page;
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAuthority('certificates:delete')")
     public void deleteById(@PathVariable Long id) {
         giftCertificateService.delete(id);
-    }
-
-    @DeleteMapping("deleteTags/{id}")
-    private boolean deleteAllTagsFromGiftById(@PathVariable Long id){
-        return false;
     }
 }

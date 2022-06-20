@@ -1,6 +1,5 @@
 package com.epam.esm.gifts.validator;
 
-import com.epam.esm.gifts.dto.CustomPageable;
 import com.epam.esm.gifts.dto.GiftCertificateAttributeDto;
 import com.epam.esm.gifts.dto.RequestOrderDto;
 import com.epam.esm.gifts.dto.TagDto;
@@ -11,6 +10,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ class EntityValidatorTest {
 
     private static EntityValidator validator;
     private static GiftCertificateAttributeDto attributeDto;
-    private static CustomPageable pageable;
+    private static Pageable pageable;
     private static RequestOrderDto orderDto;
 
     @BeforeAll
@@ -34,7 +34,6 @@ class EntityValidatorTest {
                 .sortingFieldList(List.of("id", "name", "description"))
                 .orderSort("desc")
                 .build();
-        pageable = new CustomPageable();
         orderDto = RequestOrderDto.builder().userId(9L).certificateIdList(List.of(1L,3L,6L,8L,10L)).build();
     }
 
@@ -109,32 +108,11 @@ class EntityValidatorTest {
         assertFalse(condition);
     }
 
-    @Test
-    void isPageDataValid() {
-        boolean condition = validator.isPageDataValid(pageable);
-        assertTrue(condition);
-    }
-
-    @ParameterizedTest
-    @CsvSource(value = {"-1, 35", "146, -1"})
-    void isPageDataValidReturnsFalseWithInvalidParams(Integer size, Integer page) {
-        pageable.setSize(size);
-        pageable.setPage(page);
-        boolean condition = validator.isPageDataValid(pageable);
-        assertFalse(condition);
-    }
-
-    @Test
-    void isPageExists() {
-        boolean condition = validator.isPageExists(pageable,20L);
-        assertTrue(condition);
-    }
-
 
     private static Object[][] description(){
         return new Object[][] {
                 {"description",true},
-                {"descr1",false},
+                {"descr#",false},
                 {"name++C+",false},
                 {"hello?0_/",false}
         };
@@ -148,19 +126,17 @@ class EntityValidatorTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"43.56", "51", "02", "443", "100", "0.12"})
-    void isPriceValidReturnsTrueWithInsertedValidPrice(String strPrice) {
+    @ValueSource(strings = {"43.56", "51", "2", "443", "100", "0.12"})
+    void isPriceValidReturnsTrueWithInserteInValidPrice(String strPrice) {
         BigDecimal validPrice = new BigDecimal(strPrice);
         boolean condition = validator.isPriceValid(validPrice);
         assertTrue(condition);
     }
 
     @ParameterizedTest
-    @NullSource
-    @ValueSource(strings = {"5545.34", "5", "0", "450", "10000", "0.9"})
+    @ValueSource(strings = {"5545.34", "5", "1", "450", "10000", "0.9"})
     void isSoftPriceValidReturnsTrueWithValidPrice(String strPrice) {
-        BigDecimal validPrice = strPrice != null ? new BigDecimal(strPrice) : null;
-        boolean condition = validator.isPriceValid(validPrice);
+        boolean condition = validator.isPriceValid(new BigDecimal(strPrice));
         assertTrue(condition);
     }
 
