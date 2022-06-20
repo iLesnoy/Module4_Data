@@ -4,10 +4,8 @@ import com.epam.esm.gifts.TagService;
 import com.epam.esm.gifts.converter.TagConverter;
 import com.epam.esm.gifts.dao.GiftCertificateRepository;
 import com.epam.esm.gifts.dao.TagRepository;
-import com.epam.esm.gifts.dto.CustomPage;
 import com.epam.esm.gifts.dto.TagDto;
 import com.epam.esm.gifts.exception.SystemException;
-import com.epam.esm.gifts.model.GiftCertificate;
 import com.epam.esm.gifts.model.Tag;
 import com.epam.esm.gifts.validator.EntityValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +15,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 import static com.epam.esm.gifts.exception.ExceptionCode.*;

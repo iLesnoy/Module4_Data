@@ -20,8 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.epam.esm.gifts.exception.ExceptionCode.NON_EXISTENT_ENTITY;
-import static com.epam.esm.gifts.exception.ExceptionCode.NON_EXISTENT_PAGE;
+import static com.epam.esm.gifts.exception.ExceptionCode.*;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -50,7 +49,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public ResponseOrderDto create(RequestOrderDto orderDto) {
-        validator.isRequestOrderDataValid(orderDto);
+        if(!validator.isRequestOrderDataValid(orderDto)){
+            throw new SystemException(INVALID_ATTRIBUTE_LIST);
+        }
         User user = userService.findUserById(orderDto.getUserId());
         List<GiftCertificate> giftCertificates = orderDto.getCertificateIdList()
                 .stream().map(giftCertificateService::findCertificateById).collect(Collectors.toList());
@@ -76,7 +77,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public Page<ResponseOrderDto> findAll(Pageable pageable) {
         Page<Order> orderPage = orderRepository.findAll(pageable);
-        if(validator.isPageExists(pageable,orderPage.getTotalElements())){
+        if(!validator.isPageExists(pageable,orderPage.getTotalElements())){
             throw new SystemException(NON_EXISTENT_PAGE);
         }
         return new CustomPage<>(orderPage.getContent(), orderPage.getPageable(), orderPage.getTotalElements())

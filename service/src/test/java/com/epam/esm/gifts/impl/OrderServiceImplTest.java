@@ -2,9 +2,7 @@ package com.epam.esm.gifts.impl;
 
 import com.epam.esm.gifts.converter.OrderConverter;
 import com.epam.esm.gifts.dao.OrderRepository;
-import com.epam.esm.gifts.dao.UserRepository;
 import com.epam.esm.gifts.dto.*;
-import com.epam.esm.gifts.exception.SystemException;
 import com.epam.esm.gifts.model.GiftCertificate;
 import com.epam.esm.gifts.model.Order;
 import com.epam.esm.gifts.model.User;
@@ -14,9 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
@@ -29,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceImplTest {

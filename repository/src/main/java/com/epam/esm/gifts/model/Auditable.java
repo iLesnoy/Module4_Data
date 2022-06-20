@@ -1,6 +1,6 @@
 package com.epam.esm.gifts.model;
 
-import lombok.Data;
+import lombok.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -10,7 +10,10 @@ import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class Auditable<U> {
@@ -24,8 +27,5 @@ public abstract class Auditable<U> {
 
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
-
-
-
 
 }

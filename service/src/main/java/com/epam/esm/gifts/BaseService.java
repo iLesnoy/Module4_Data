@@ -1,6 +1,5 @@
 package com.epam.esm.gifts;
 
-import com.epam.esm.gifts.dto.ResponseOrderDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
