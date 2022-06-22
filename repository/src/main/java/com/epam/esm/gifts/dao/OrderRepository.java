@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Repository("OrderReposit")
+@Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
     Page<Order> findOrderByUserId(Long userId, Pageable pageable);
 

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import java.util.Optional;
 import static com.epam.esm.gifts.dao.constants.SqlQuery.FIND_CERTIFICATES_BY_SEARCH_PART;
 import static com.epam.esm.gifts.dao.constants.SqlQuery.FIND_CERTIFICATES_BY_TAG_NAMES_AND_SEARCH_PART;
 
+@Repository
 public interface GiftCertificateRepository extends JpaRepository<GiftCertificate,Long> {
 
     @Query(FIND_CERTIFICATES_BY_SEARCH_PART)
