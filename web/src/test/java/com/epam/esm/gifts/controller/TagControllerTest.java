@@ -19,7 +19,7 @@ class TagControllerTest {
 
         given().log().body()
                 .contentType("application/json").body(tag)
-                .when().get("http://localhost:8080/api/tags/1")
+                .when().get("http://localhost:8085/gift_system/api/tags/1")
                 .then().log().body()
                 .statusCode(HttpStatus.OK.value());
     }
@@ -29,7 +29,7 @@ class TagControllerTest {
 
         given().log().body()
                 .contentType("application/json").body(tag)
-                .when().get("http://localhost:8080/api/tags/999999")
+                .when().get("http://localhost:8085/gift_system/api/tags/999999")
                 .then().log().body()
                 .statusCode(HttpStatus.NOT_FOUND.value());
     }
@@ -39,7 +39,7 @@ class TagControllerTest {
 
         given().log().body()
                 .contentType("application/json").body(List.of(tag,tag2))
-                .when().get("http://localhost:8080/api/tags/?page=1&size=1")
+                .when().get("http://localhost:8085/gift_system/api/tags?page=1&size=1")
                 .then().log().body()
                 .statusCode(HttpStatus.OK.value());
     }

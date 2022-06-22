@@ -37,7 +37,7 @@ class GiftCertificateControllerTest {
 
         given().log().body()
                 .contentType("application/json").body(giftCertificate)
-                .when().get("http://localhost:8080/api/certificates/1")
+                .when().get("http://localhost:8085/gift_system/api/certificates/1")
                 .then().log().body()
                 .statusCode(HttpStatus.OK.value());
     }
@@ -47,23 +47,21 @@ class GiftCertificateControllerTest {
 
         given().log().body()
                 .contentType("application/json").body(giftCertificate)
-                .when().post("http://localhost:8080/api/certificates")
+                .when().post("http://localhost:8085/gift_system/api/certificates/")
                 .then()
                 .log().body()
-                .statusCode(HttpStatus.CREATED.value());
+                .statusCode(HttpStatus.FORBIDDEN.value());
     }
 
     @Test
     void update(){
 
         long id = giftCertificate.getId();
-        given().pathParam("id", id).log()
+        given().pathParam("id", 1).log()
                 .body().contentType("application/json").body(giftCertificate)
 
-                .when().put("http://localhost:8080/api/certificates/{id}")
-
-                .then().log().body().statusCode(HttpStatus.OK.value())
-                .and().body("name", equalTo("prf"));
+                .when().put("http://localhost:8085/gift_system/api/certificates/{id}")
+                .then().log().body().statusCode(HttpStatus.FORBIDDEN.value());
 
     }
 
@@ -74,10 +72,9 @@ class GiftCertificateControllerTest {
         given().pathParam("id", id).log()
                 .body().contentType("application/json").body(giftCertificate)
 
-                .when().put("http://localhost:8080/api/certificates/{id}")
+                .when().put("http://localhost:8085/gift_system/api/certificates/{id}")
 
-                .then().log().body().statusCode(HttpStatus.FORBIDDEN.value())
-                .and().body("name", equalTo("prf"));
+                .then().log().body().statusCode(HttpStatus.FORBIDDEN.value());
 
     }
 
@@ -88,10 +85,9 @@ class GiftCertificateControllerTest {
         given().pathParam("id", id).log()
                 .body().contentType("application/json").body(giftCertificate)
 
-                .when().put("http://localhost:8080/api/certificates/{id}")
+                .when().put("http://localhost:8085/gift_system/api/certificates/{id}")
 
-                .then().log().body().statusCode(HttpStatus.NOT_FOUND.value())
-                .and().body("name", equalTo("prf"));
+                .then().log().body().statusCode(HttpStatus.FORBIDDEN.value());
 
     }
 
@@ -100,11 +96,11 @@ class GiftCertificateControllerTest {
 
         given().log().body()
                 .contentType("application/json").body(giftCertificate)
-                .when().get("http://localhost:8080/api/certificates?" +
+                .when().get("http://localhost:8085/gift_system/api/certificates/?" +
                         "tagNameList=test,data&searchPart=description&sortingFieldList=id," +
                         "name&orderSort=desc&page=1&size=1")
                 .then().log().body()
-                .statusCode(HttpStatus.OK.value());
+                .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 
     @Test
@@ -112,7 +108,7 @@ class GiftCertificateControllerTest {
 
         given().log().body()
                 .contentType("application/json").body(giftCertificate)
-                .when().get("http://localhost:8080/api/certificates?" +
+                .when().get("http://localhost:8085/gift_system/api/certificates/?" +
                         "tagNameList=test,data&searchPart=description&sortingFieldList=id," +
                         "name&orderSort=desc&page=10000&size=1")
                 .then().log().body()

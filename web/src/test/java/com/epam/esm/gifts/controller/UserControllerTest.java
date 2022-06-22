@@ -12,7 +12,7 @@ class UserControllerTest {
 
     private User user = User.builder().name("admin")
             .id(1L)
-            .password("$2a$12$LlyfSzHKIgFfoufqFbEYNeY6ePGUZq9vKpnuqFgMO8dyNyOBGDNK.")
+            .password("$udasdae123123DEW")
             .role(Role.ADMIN)
             .orderList(null).build();
     @Test
@@ -20,10 +20,10 @@ class UserControllerTest {
 
         given().log().body()
                 .contentType("application/json").body(user)
-                .when().post("http://localhost:8080/api/users")
+                .when().post("http://localhost:8085/gift_system/api/auth/signup")
                 .then()
                 .log().body()
-                .statusCode(HttpStatus.CREATED.value());
+                .statusCode(HttpStatus.CONFLICT.value());
     }
 
     @Test
@@ -31,10 +31,10 @@ class UserControllerTest {
 
         given().log().body()
                 .contentType("application/json").body(user)
-                .when().post("http://localhost:8080/api/users_@!")
+                .when().post("http://localhost:8085/gift_system/api/users_@!")
                 .then()
                 .log().body()
-                .statusCode(HttpStatus.NOT_FOUND.value());
+                .statusCode(HttpStatus.FORBIDDEN.value());
     }
 
     @Test
@@ -43,7 +43,7 @@ class UserControllerTest {
         given().log().body()
                 .contentType("application/json")
                 .body(user)
-                .when().get("http://localhost:8080/api/users/1")
+                .when().get("http://localhost:8085/gift_system/api/users/1")
                 .then().log().body()
                 .statusCode(HttpStatus.FORBIDDEN.value());
     }
@@ -54,7 +54,7 @@ class UserControllerTest {
         given().log().body()
                 .contentType("application/json")
                 .body(user)
-                .when().get("http://localhost:8080/api/users/search/admin")
+                .when().get("http://localhost:8085/gift_system/api/users/admin")
                 .then().log().body()
                 .statusCode(HttpStatus.FORBIDDEN.value());
     }
@@ -63,10 +63,9 @@ class UserControllerTest {
     @Test
     void delete() {
 
-        given().pathParam("user", user).log()
-                .body().contentType("application/json")
+        given().pathParam("id",1)
                 .when()
-                .delete("http://localhost:8080/api/users/1")
+                .delete("http://localhost:8085/gift_system/api/users/{id}")
                 .then().log().body()
                 .statusCode(HttpStatus.FORBIDDEN.value());
     }
