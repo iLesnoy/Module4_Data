@@ -37,7 +37,7 @@ class AuthenticationControllerTest {
                 .when().post("http://localhost:8085/gift_system/api/auth/signup")
                 .then()
                 .log().body()
-                .statusCode(HttpStatus.FORBIDDEN.value());
+                .statusCode(HttpStatus.OK.value());
     }
 
     @Test
