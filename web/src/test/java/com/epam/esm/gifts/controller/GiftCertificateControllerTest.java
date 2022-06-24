@@ -34,9 +34,9 @@ class GiftCertificateControllerTest {
     @Test
     void findById() {
 
-        given().log().body()
+        given().pathParam("id",1).body(giftCertificate)
                 .contentType("application/json").body(giftCertificate)
-                .when().get("http://localhost:8085/gift_system/api/certificates/1")
+                .when().get("http://localhost:8085/gift_system/api/certificates/{id}")
                 .then().log().body()
                 .statusCode(HttpStatus.OK.value());
     }
