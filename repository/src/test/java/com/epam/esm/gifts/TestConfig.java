@@ -1,6 +1,7 @@
-package com.epam.esm.gifts.dao.config;
+package com.epam.esm.gifts;
 
 import org.hibernate.SessionFactory;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -15,14 +16,12 @@ import org.springframework.transaction.PlatformTransactionManager;
 import javax.persistence.EntityManager;
 import java.util.Properties;
 
-
 @Configuration
 @Profile("test")
-@ComponentScan("com.epam.esm.gifts")
 public class TestConfig{
     private static final String SQL_SETUP = "classpath:db_setup.sql";
     private static final String SQL_INIT = "classpath:db_init.sql";
-    private static final String SCANNED_PACKAGE = "com.epam.esm.gifts.model";
+    private static final String SCANNED_PACKAGE = "com.epam.esm.gifts.dao";
 
 
 

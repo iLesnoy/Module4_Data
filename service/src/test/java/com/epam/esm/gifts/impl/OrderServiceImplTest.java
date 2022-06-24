@@ -3,6 +3,7 @@ package com.epam.esm.gifts.impl;
 import com.epam.esm.gifts.converter.OrderConverter;
 import com.epam.esm.gifts.dao.OrderRepository;
 import com.epam.esm.gifts.dto.*;
+import com.epam.esm.gifts.exception.SystemException;
 import com.epam.esm.gifts.model.GiftCertificate;
 import com.epam.esm.gifts.model.Order;
 import com.epam.esm.gifts.model.User;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 
@@ -24,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,10 +40,11 @@ class OrderServiceImplTest {
     private OrderConverter converter;
     @Mock
     private OrderRepository orderDao;
-
+    @Mock
     private EntityValidator validator;
     @Mock
     private GiftCertificateServiceImpl certificateService;
+
 
     private User user;
     private UserDto userDto;
@@ -50,9 +54,11 @@ class OrderServiceImplTest {
     private RequestOrderDto request;
     private Pageable pageable;
     private CustomPage<ResponseOrderDto> orderPage;
+    private List<GiftCertificate>giftCertificates;
 
     @BeforeEach
     public void SetUp() {
+        request = RequestOrderDto.builder().userId(1L).certificateIdList(List.of()).build();
         validator = new EntityValidator();
         user = User.builder().id(1L).name("UserName").build();
         userDto = UserDto.builder().id(1L).name("UserName").build();
@@ -71,6 +77,7 @@ class OrderServiceImplTest {
                 .build();
         request = RequestOrderDto.builder().userId(9L).certificateIdList(List.of(1L, 1L)).build();
         orderPage = new CustomPage<>(List.of(orderDto, orderDto), pageable, 15L);
+        giftCertificates  = List.of(certificate);
     }
 
 
@@ -86,6 +93,14 @@ class OrderServiceImplTest {
         doReturn(Optional.of(order)).when(orderDao).findById(anyLong());
         ResponseOrderDto actual = service.findById(1L);
         assertEquals(orderDto, actual);
+    }
+
+    @Test
+    void findByIdNotExist() {
+        doReturn(orderDto).when(converter).orderToDto(any(Order.class));
+        doReturn(Optional.empty()).when(orderDao).findById(anyLong());
+        SystemException thrown = assertThrows(SystemException.class, () -> service.findById(Mockito.anyLong()));
+        assertEquals(40410, thrown.getErrorCode());
     }
 
 
