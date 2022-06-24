@@ -24,7 +24,7 @@ class UserControllerTest {
                 .when().post("http://localhost:8085/gift_system/api/auth/signup")
                 .then()
                 .log().body()
-                .statusCode(HttpStatus.CONFLICT.value());
+                .statusCode(HttpStatus.CREATED.value());
     }
 
     @Test
