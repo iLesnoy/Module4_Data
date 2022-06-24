@@ -145,9 +145,6 @@ class GiftCertificateServiceImplTest {
     @Test
     void updateNotExistEntity() {
         doNothing().when(validator).checkGiftValidation(Mockito.any(GiftCertificateDto.class));
-        doReturn(tag).when(tagConverter).dtoToTag(Mockito.any(TagDto.class));
-        doReturn(tag).when(tagService).createTag(Mockito.any(Tag.class));
-        doReturn(Optional.empty()).when(certificateDao).findById(Mockito.anyLong());
         SystemException thrown = assertThrows(SystemException.class, () -> service.update(anyLong(),certificateDto));
         assertEquals(40410, thrown.getErrorCode());
     }

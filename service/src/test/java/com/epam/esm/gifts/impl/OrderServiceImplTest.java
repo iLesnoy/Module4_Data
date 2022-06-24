@@ -97,7 +97,6 @@ class OrderServiceImplTest {
 
     @Test
     void findByIdNotExist() {
-        doReturn(orderDto).when(converter).orderToDto(any(Order.class));
         doReturn(Optional.empty()).when(orderDao).findById(anyLong());
         SystemException thrown = assertThrows(SystemException.class, () -> service.findById(Mockito.anyLong()));
         assertEquals(40410, thrown.getErrorCode());
