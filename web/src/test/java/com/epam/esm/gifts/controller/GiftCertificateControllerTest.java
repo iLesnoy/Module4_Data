@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.core.IsEqual.equalTo;
 
 class GiftCertificateControllerTest {
 
@@ -40,6 +39,16 @@ class GiftCertificateControllerTest {
                 .when().get("http://localhost:8085/gift_system/api/certificates/1")
                 .then().log().body()
                 .statusCode(HttpStatus.OK.value());
+    }
+
+    @Test
+    void findByIdNotExist() {
+
+        given().log().body()
+                .contentType("application/json").body(giftCertificate)
+                .when().get("http://localhost:8085/gift_system/api/certificates/10000000")
+                .then().log().body()
+                .statusCode(HttpStatus.NOT_FOUND.value());
     }
 
     @Test
@@ -84,9 +93,7 @@ class GiftCertificateControllerTest {
         long id = giftCertificate.getId();
         given().pathParam("id", id).log()
                 .body().contentType("application/json").body(giftCertificate)
-
                 .when().put("http://localhost:8085/gift_system/api/certificates/{id}")
-
                 .then().log().body().statusCode(HttpStatus.FORBIDDEN.value());
 
     }

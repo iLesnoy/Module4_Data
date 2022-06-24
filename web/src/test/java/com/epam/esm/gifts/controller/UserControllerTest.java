@@ -10,11 +10,12 @@ import static io.restassured.RestAssured.given;
 class UserControllerTest {
 
 
-    private User user = User.builder().name("admin")
+    private final User user = User.builder().name("admin")
             .id(1L)
             .password("$udasdae123123DEW")
             .role(Role.ADMIN)
             .orderList(null).build();
+
     @Test
     void create() {
 
@@ -49,6 +50,17 @@ class UserControllerTest {
     }
 
     @Test
+    void findByNotExistId() {
+
+        given().log().body()
+                .contentType("application/json")
+                .body(user)
+                .when().get("http://localhost:8085/gift_system/api/users/10000000")
+                .then().log().body()
+                .statusCode(HttpStatus.FORBIDDEN.value());
+    }
+
+    @Test
     void findByName() {
 
         given().log().body()
@@ -62,7 +74,6 @@ class UserControllerTest {
 
     @Test
     void delete() {
-
         given().pathParam("id",1)
                 .when()
                 .delete("http://localhost:8085/gift_system/api/users/{id}")

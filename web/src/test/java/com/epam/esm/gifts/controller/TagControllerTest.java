@@ -10,10 +10,11 @@ import static io.restassured.RestAssured.given;
 
 class TagControllerTest {
 
-    private Tag tag = Tag.builder().id(1L)
+    private final Tag tag = Tag.builder().id(1L)
             .name("test").build();
-    private Tag tag2 = Tag.builder().id(2L)
+    private final Tag tag2 = Tag.builder().id(2L)
             .name("aduditTest").build();
+
     @Test
     void findById() {
 
@@ -36,11 +37,29 @@ class TagControllerTest {
 
     @Test
     void findAll() {
-
         given().log().body()
-                .contentType("application/json").body(List.of(tag,tag2))
+                .contentType("application/json").body(List.of(tag, tag2))
                 .when().get("http://localhost:8085/gift_system/api/tags?page=1&size=1")
                 .then().log().body()
                 .statusCode(HttpStatus.OK.value());
+    }
+
+
+    @Test
+    void delete() {
+        given().pathParam("id", 1).log().body()
+                .contentType("application/json")
+                .delete("http://localhost:8085/gift_system/api/tags/{id}")
+                .then().log().body()
+                .statusCode(HttpStatus.FORBIDDEN.value());
+    }
+
+    @Test
+    void deleteIfTagNotExist() {
+        given().pathParam("id", 100000).log().body()
+                .contentType("application/json")
+                .delete("http://localhost:8085/gift_system/api/tags/{id}")
+                .then().log().body()
+                .statusCode(HttpStatus.FORBIDDEN.value());
     }
 }
