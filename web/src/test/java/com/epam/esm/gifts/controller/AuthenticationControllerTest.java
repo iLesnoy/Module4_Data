@@ -23,10 +23,10 @@ class AuthenticationControllerTest {
     void signUpWithExistName() {
         given().log().body()
                 .contentType("application/json").body(user)
-                .when().post("http://localhost:8085/gift_system/api/auth/signup")
+                .when().post("http://localhost:8085/giftsystem/api/auth/signup")
                 .then()
                 .log().body()
-                .statusCode(HttpStatus.CONFLICT.value());
+                .statusCode(HttpStatus.NOT_FOUND.value());
     }
 
     @Test
