@@ -6,7 +6,10 @@ import com.epam.esm.gifts.converter.GiftCertificateConverter;
 import com.epam.esm.gifts.converter.TagConverter;
 import com.epam.esm.gifts.dao.GiftCertificateRepository;
 import com.epam.esm.gifts.dao.OrderRepository;
-import com.epam.esm.gifts.dto.*;
+import com.epam.esm.gifts.dto.CustomPage;
+import com.epam.esm.gifts.dto.GiftCertificateAttributeDto;
+import com.epam.esm.gifts.dto.GiftCertificateDto;
+import com.epam.esm.gifts.dto.TagDto;
 import com.epam.esm.gifts.exception.SystemException;
 import com.epam.esm.gifts.model.GiftCertificate;
 import com.epam.esm.gifts.model.Tag;
@@ -25,7 +28,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.epam.esm.gifts.exception.ExceptionCode.*;
-import static org.springframework.data.domain.Sort.*;
+import static org.springframework.data.domain.Sort.by;
 
 
 @Service

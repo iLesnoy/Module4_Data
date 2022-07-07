@@ -1,6 +1,5 @@
 package com.epam.esm.gifts.impl;
 
-import com.epam.esm.gifts.converter.OrderConverter;
 import com.epam.esm.gifts.converter.UserConverter;
 import com.epam.esm.gifts.dao.OrderRepository;
 import com.epam.esm.gifts.dao.UserRepository;
@@ -35,11 +34,7 @@ class UserServiceImplTest {
 
     private User user;
     private Order order;
-    private ResponseOrderDto responseOrderDto;
-    private GiftCertificate certificate;
     private UserDto userDto;
-    private List<UserDto> userDtos;
-    private List<ResponseOrderDto> orders;
 
     @InjectMocks
     UserServiceImpl userService;
@@ -57,14 +52,9 @@ class UserServiceImplTest {
     UserConverter userConverter;
     @Mock
     EntityValidator validator;
-    @Mock
-    OrderConverter orderConverter;
 
     @BeforeEach
     void setUp() {
-        orders = List.of(ResponseOrderDto.builder().id(1L).build());
-        responseOrderDto = ResponseOrderDto.builder().build();
-        certificate = GiftCertificate.builder().id(1L).name("certificate").build();
         order = Order.builder().id(1L)
                 .purchaseTime((LocalDateTime.of(2001, 1, 1, 2, 3)))
                 .cost(new BigDecimal("500"))
@@ -76,7 +66,6 @@ class UserServiceImplTest {
                 .orderList(List.of(order)).build();
         userDto = UserDto.builder().id(1L)
                 .name("Slava").password("23123PERW").build();
-        userDtos = List.of(userDto, userDto);
         userPage = new CustomPage<>(List.of(user), pageable, 5L);
         orderPage = new CustomPage<>(List.of(order), pageable, 5L);
     }
@@ -144,12 +133,27 @@ class UserServiceImplTest {
     }
 
     @Test
+    void findUserByNotExistId() {
+        doReturn(Optional.empty()).when(userDao).findById(anyLong());
+        SystemException exception = assertThrows(SystemException.class, () -> userService.findById(10000L));
+        assertEquals(40410, exception.getErrorCode());
+    }
+
+    @Test
     void findByName() {
         doReturn(true).when(validator).isNameValid(Mockito.anyString());
         doReturn(userDto).when(userConverter).userToDto(any(User.class));
         doReturn(Optional.of(user)).when(userDao).findByName(Mockito.anyString());
         UserDto actual = userService.findByName("papa");
         assertEquals(userDto, actual);
+    }
+
+    @Test
+    void findByNotExistName() {
+        doReturn(true).when(validator).isNameValid(Mockito.anyString());
+        doReturn(Optional.empty()).when(userDao).findByName(Mockito.anyString());
+        SystemException exception = assertThrows(SystemException.class, () -> userService.findByName("name"));
+        assertEquals(40410, exception.getErrorCode());
     }
 
 }

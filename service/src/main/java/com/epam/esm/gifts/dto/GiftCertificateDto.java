@@ -16,7 +16,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Builder
 @NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 @JsonPropertyOrder({"id", "name", "description", "price", "duration", "create-date", "last-update-date", "tags"})
 public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> {
     @JsonProperty("id")

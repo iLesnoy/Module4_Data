@@ -14,11 +14,11 @@ import java.util.Set;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Table(name = "tag")
 @Entity
-public class Tag extends Auditable<String>{
+public class Tag /*extends Auditable<String>*/{
 
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(name = "name", unique = true, nullable = false, updatable = false)

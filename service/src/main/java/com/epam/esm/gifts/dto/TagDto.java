@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 
-import java.io.Serializable;
-
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Builder

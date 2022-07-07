@@ -75,8 +75,6 @@ class GiftCertificateServiceImplTest {
     private TagConverter tagConverter;
     @Mock
     private TagServiceImpl tagService;
-    @Mock
-    private GiftCertificateRepository giftCertificateRepository;
 
     @BeforeEach
     void setUp() {
@@ -126,18 +124,30 @@ class GiftCertificateServiceImplTest {
 
 
 
-    /*@Test
+    @Test
     void update() {
         doNothing().when(validator).checkGiftValidation(Mockito.any(GiftCertificateDto.class));
-        doReturn(certificate).when(service).findCertificateById(Mockito.anyLong());
-
         doReturn(tag).when(tagConverter).dtoToTag(Mockito.any(TagDto.class));
         doReturn(tag).when(tagService).createTag(Mockito.any(Tag.class));
-        doNothing().when(certificateDao).save(certificate);
+        doReturn(Optional.of(certificate)).when(certificateDao).findById(Mockito.anyLong());
         doReturn(updatedCertificate).when(certificateConverter).giftCertificateToDto(Mockito.any(GiftCertificate.class));
         GiftCertificateDto actual = service.update(1L, updatedCertificate);
         assertEquals(actual, updatedCertificate);
-    }*/
+    }
+
+    @Test
+    void updateInvalidGiftData() {
+        doThrow(new SystemException(40010)).when(validator).checkGiftValidation(Mockito.any(GiftCertificateDto.class));
+        SystemException thrown = assertThrows(SystemException.class, () -> service.update(anyLong(),certificateDto));
+        assertEquals(40010, thrown.getErrorCode());
+    }
+
+    @Test
+    void updateNotExistEntity() {
+        doNothing().when(validator).checkGiftValidation(Mockito.any(GiftCertificateDto.class));
+        SystemException thrown = assertThrows(SystemException.class, () -> service.update(anyLong(),certificateDto));
+        assertEquals(40410, thrown.getErrorCode());
+    }
 
     @Test
     void updateWithNullTagList() {
@@ -166,6 +176,13 @@ class GiftCertificateServiceImplTest {
         doReturn(Optional.of(certificate)).when(certificateDao).findById(anyLong());
         GiftCertificateDto actual = service.findById(1L);
         assertNotNull(actual);
+    }
+
+    @Test
+    void findByIdUserNotFound() {
+        doReturn(Optional.empty()).when(certificateDao).findById(anyLong());
+        SystemException thrown = assertThrows(SystemException.class, () -> service.findById(anyLong()));
+        assertEquals(40410, thrown.getErrorCode());
     }
 
     @Test
@@ -207,13 +224,6 @@ class GiftCertificateServiceImplTest {
     }
 
 
-    /*@Test
-    void delete() {
-        doReturn(Optional.of(certificate)).when(giftCertificateRepository).findById(Mockito.anyLong());
-        doReturn(Optional.empty()).when(orderRepository).findFirstByCertificateListId(Mockito.anyLong());
-        service.delete(1L);
-        assertTrue(true);
-    }*/
 
     @Test
     void deleteIfEntityUsed() {
@@ -221,8 +231,4 @@ class GiftCertificateServiceImplTest {
         assertEquals(40410, thrown.getErrorCode());
     }
 
-
-    private void setInvalidName() {
-        doReturn(false).when(validator).isNameValid(anyString());
-    }
 }

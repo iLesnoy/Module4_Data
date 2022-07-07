@@ -21,9 +21,7 @@ public enum Permission {
 
     ORDERS_CREATE("orders:create"),
     ORDERS_READ("orders:read"),
-
     STATISTICS_READ("statistics:read"),
-
     AUTH_SIGN_UP("auth:sign_up");
 
     private final String permission;

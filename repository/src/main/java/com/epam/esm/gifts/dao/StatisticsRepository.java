@@ -9,7 +9,7 @@ import java.util.Optional;
 
 import static com.epam.esm.gifts.dao.constants.SqlQuery.FIND_MOST_POPULAR_TAG;
 
-
+@Repository
 public interface StatisticsRepository extends JpaRepository<Tag,Long> {
 
     @Query(value = FIND_MOST_POPULAR_TAG, nativeQuery = true)

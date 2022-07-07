@@ -17,6 +17,7 @@ public class UserConverter {
 
     public UserDto userToDto(User user){
         return UserDto.builder().id(user.getId())
-                .name(user.getName()).role(UserDto.Role.valueOf(user.getRole().name())).build();
+                .name(user.getName()).password(user.getPassword())
+                .role(UserDto.Role.valueOf(user.getRole().name())).build();
     }
 }

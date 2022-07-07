@@ -1,10 +1,9 @@
 package com.epam.esm.gifts.model;
 
-import lombok.*;
-import org.springframework.util.CollectionUtils;
+import lombok.Builder;
+import lombok.Data;
 
 import java.util.List;
-import java.util.Objects;
 
 @Data
 @Builder
