@@ -52,13 +52,13 @@ class AuthenticationControllerTest {
 
 
     @Test
-    void authenticate() {
+    void authenticateBadRequest() {
         given().log().body()
                 .contentType("application/json").body(user)
                 .when().post("http://localhost:8085/gift_system/api/auth/login")
                 .then()
                 .log().body()
-                .statusCode(HttpStatus.OK.value());
+                .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 
     @Test
