@@ -26,7 +26,17 @@ class AuthenticationControllerTest {
                 .when().post("http://localhost:8085/gift_system/api/auth/signup")
                 .then()
                 .log().body()
-                .statusCode(HttpStatus.CONFLICT.value());
+                .statusCode(HttpStatus.CREATED.value());
+    }
+
+    @Test
+    void signUpWithEmptyName() {
+        given().log().body()
+                .contentType("application/json").body("")
+                .when().post("http://localhost:8085/gift_system/api/auth/signup")
+                .then()
+                .log().body()
+                .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 
     @Test
@@ -39,6 +49,7 @@ class AuthenticationControllerTest {
                 .log().body()
                 .statusCode(HttpStatus.FORBIDDEN.value());
     }
+
 
     @Test
     void authenticate() {
@@ -55,6 +66,17 @@ class AuthenticationControllerTest {
         user.setPassword(null);
         given().log().body()
                 .contentType("application/json").body(user)
+                .when().post("http://localhost:8085/gift_system/api/auth/login")
+                .then()
+                .log().body()
+                .statusCode(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @Test
+    void authenticateInvalidUserDataBody() {
+        user.setPassword(null);
+        given().log().body()
+                .contentType("application/json").body("")
                 .when().post("http://localhost:8085/gift_system/api/auth/login")
                 .then()
                 .log().body()
