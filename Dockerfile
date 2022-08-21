@@ -29,7 +29,7 @@ COPY repository/target/repository-1.0.0.jar .
 COPY service/target/service-1.0.0.jar .
 COPY web/target/web-1.0.0.jar .
 
-EXPOSE 8080
+EXPOSE 8086
 
 ENTRYPOINT ["java","-jar","web-1.0.0.jar"]
-CMD ["-start"]
+#CMD ["-start"]
