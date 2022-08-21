@@ -6,12 +6,16 @@ import com.epam.esm.gifts.dto.AuthenticationResponseDto;
 import com.epam.esm.gifts.dto.UserDto;
 import com.epam.esm.gifts.hateaos.HateoasBuilder;
 import com.epam.esm.gifts.security.JwtTokenProvider;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
+@Api("user authorization and authentication(signup)")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthenticationController {
@@ -29,6 +33,8 @@ public class AuthenticationController {
         this.authenticationManager = authenticationManager;
     }
 
+    @ApiOperation (value = "userDto", notes = "new user details")
+    @ApiImplicitParam(name = "userDataTransferObj")
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto signUp(@RequestBody UserDto userDto) {
@@ -37,6 +43,7 @@ public class AuthenticationController {
         return created;
     }
 
+    @ApiOperation("user authentication method")
     @PostMapping("/login")
     public AuthenticationResponseDto authenticate(@RequestBody AuthenticationRequestDto requestDto) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(requestDto.getName(), requestDto.getPassword()));

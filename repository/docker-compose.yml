@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DATABASE=gifts
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=12345
+    ports:
+      - 3307:3306
