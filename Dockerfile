@@ -1,35 +1,35 @@
-FROM maven:3.5-alpine
+FROM maven:3.5.2-jdk-8-alpine AS MAVEN_TOOL_CHAIN
 
 WORKDIR /spring/app
 
+COPY pom.xml pom.xml
 COPY repository/pom.xml repository/pom.xml
 COPY service/pom.xml service/pom.xml
 COPY web/pom.xml web/pom.xml
 
+# Resolve dependencies for `common` module, e.g., shared libraries
+# Also build all the required projects needed by the common module.
+# In this case, it will also resolve dependencies for the `root` module.
+# Copy full sources for `common` module
+COPY repository repository
+COPY service service
+COPY web web
 
-COPY pom.xml .
-RUN mvn -B -e -C org.apache.maven.plugins:maven-dependency-plugin:3.1.2:go-offline
+RUN mkdir -p /jar-layers
+WORKDIR /jar-layers
+# Extract JAR layers
 
-# if  modules  depends each other, can use -DexcludeArtifactIds as follows
-# RUN mvn -B -e -C org.apache.maven.plugins:maven-dependency-plugin:3.1.2:go-offline -DexcludeArtifactIds=module1
+FROM openjdk:17-oracle
 
-# Copy the dependencies from the DEPS stage with the advantage
-# of using docker layer caches. If something goes wrong from this
-# line on, all dependencies from DEPS were already downloaded and
-# stored in docker's layers.
-FROM maven:3.6-alpine as BUILDER
-WORKDIR /spring/app
-COPY --from=deps /root/.m2 /root/.m2
-COPY --from=deps /spring/app/ /spring/app
-COPY repository/src /spring/app/repository/src
-COPY service/src /spring/app/service/src
-COPY web/src /spring/app/web/src
+RUN mkdir -p /app
+WORKDIR /app
 
+# Copy JAR layers, layers that change more often should go at the end
+COPY repository/target/repository-1.0.0.jar .
+COPY service/target/service-1.0.0.jar .
+COPY web/target/web-1.0.0.jar .
 
-RUN mvn -B -e -o clean install -DskipTests=true
-
-FROM openjdk:8-alpine
-WORKDIR /spring/app
-COPY --from=builder /spring/app/epam/esm/my-1.0.0.jar .
 EXPOSE 8080
-CMD [ "java", "-jar", "/spring/app/my-1.0.0.jar" ]
+
+ENTRYPOINT ["java","-jar","web-1.0.0.jar"]
+CMD ["-start"]
